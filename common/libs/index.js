@@ -2,10 +2,16 @@ module.exports = {
   name: 'libs',
   description: 'Common libraries',
   services: {
+    md5: {
+      require: '::crypto',
+      func: crypto => data =>
+        crypto.createHash('md5').update(data).digest('hex')
+    },
     error: {
-      func: () => (status, message) => {
+      func: () => (status, message, json) => {
         const error = new Error(message);
         error.status = status;
+        error.json = json;
         return error;
       }
     },
@@ -69,6 +75,7 @@ module.exports = {
     }
   },
   exports: [
+    'md5',
     'async-wrapper',
     'otp',
     'jwt',

@@ -1,6 +1,6 @@
 {
   "port": 8080,
-  "mongodbUrl": "mongodb://localhost/dike",
+  "mongodbUrl": "mongodb://localhost/cfx",
   "bodyLimit": "100kb",
   "smtp": {
     "host": "mail.dike.bet",

@@ -2,10 +2,12 @@ module.exports = mongoose => {
   return mongoose.model(
     'User',
     {
+      username: String,
       email: String,
       password: String,
-      tfaSecret: String,
-      referer: mongoose.Schema.ObjectId
+      referralCode: String,
+      refererId: mongoose.Schema.ObjectId,
+      isActivated: Boolean
     },
     'user'
   );

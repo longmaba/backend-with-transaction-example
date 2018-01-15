@@ -32,7 +32,18 @@ Good luck and have fun!</div>
 </div></div>`
         });
       }
+    },
+    'email.sendActivation': {
+      require: ['email'],
+      func: email => (to, activationCode) => {
+        return email.sendMail({
+          text: `Activate your email: ${activationCode}`,
+          from: 'Dike <login@dike.bet>',
+          to,
+          subject: 'CFX - Account activation'
+        });
+      }
     }
   },
-  exports: ['email', 'email.sendOTP']
+  exports: ['email', 'email.sendOTP', 'email.sendActivation']
 };

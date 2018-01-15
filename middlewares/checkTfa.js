@@ -1,5 +1,5 @@
 module.exports = speakeasy => () => async (req, res, next) => {
-  const secret = req.profile.tfaSecret;
+  const secret = req.user.tfaSecret;
   if (!secret) {
     next();
   } else {

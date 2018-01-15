@@ -7,7 +7,9 @@ module.exports = {
       require: ['api', '::redis', '::express-limiter', 'config'],
       async: true,
       func: (api, redis, expressLimiter, config) => {
-        const client = require('redis').createClient(config.redisUrl || 'redis://localhost');
+        const client = require('redis').createClient(
+          config.redisUrl || 'redis://localhost'
+        );
         const limiter = expressLimiter(api, client);
         return limiter;
       }
@@ -25,7 +27,6 @@ module.exports = {
       ],
       async: true,
       func: (api, middlewares, config, app, logger, chalk, figlet, Promise) => {
-
         app.use(middlewares);
 
         app.get('/', (req, res) => {
@@ -47,8 +48,12 @@ module.exports = {
           app.use(function(err, req, res, next) {
             console.error(err);
             res.status(err.status || 500);
-            res.header('Content-Type', 'text/plain');
-            res.send(`${err.message}`);
+            if (err.json) {
+              res.send(JSON.parse(err.message));
+            } else {
+              res.header('Content-Type', 'text/plain');
+              res.send(`${err.message}`);
+            }
           });
         }
 
