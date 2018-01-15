@@ -1,0 +1,57 @@
+{
+  "port": 8080,
+  "mongodbUrl": "mongodb://localhost/dike",
+  "bodyLimit": "100kb",
+  "smtp": {
+    "host": "mail.dike.bet",
+    "port": 587,
+    "auth": {
+      "user": "login@dike.bet",
+      "pass": "Thu6ngay13"
+    }
+  },
+  "randomOrg": {
+    "apiKey": "44bb4a9a-1e03-4ef5-963a-ab7ce4492923"
+  },
+  "admin": {
+    "name": "admin",
+    "pass": "12345"
+  },
+  "twilio": {
+    "sid": "ACf85b8f3fb51650da370a060b836b0953",
+    "token": "269f694c54d92a348ad3d5506f07f056",
+    "number": "+17186186251"
+  },
+  "corsHeaders": ["Link"],
+  "jwtSecret": "SuyVuX8j9EJXmDExvkj4",
+  "cloudinary": {
+    "cloud_name": "tingme",
+    "api_key": "732473685971157",
+    "api_secret": "IHexxVg4tg5afrTdpkTdNauC5y0"
+  },
+  "appName": "com.tingme.app",
+  "pushNotification": {
+    "apn": {
+      "token": {
+        "key": "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgC2BOGcbNg+j1A0sM61n1YqC0sm8qc2oFeHqXHySLxtSgCgYIKoZIzj0DAQehRANCAAT/hRasAUL7nkQwQVRlPspdFIW7mL/lnqxrzG9obmkVuyWqPnT2S3r/Dxf3FDNSP39cZ49Hqpd0K8S/nZXEQxLT\n-----END PRIVATE KEY-----",
+        "keyId": "SC8A9D7Y8L",
+        "teamId": "63M98WD275"
+      }
+    }
+  },
+  "redisUrl": "redis://localhost",
+  "bitcoin": {
+    "host": "localhost",
+    "port": "18332",
+    "username": "foo",
+    "password": "bar" 
+  },
+  "parityUrl": "http://localhost:8545",
+  "ethMainAddress": {
+    "address":"0xc69a35d1e973846f9c63a89d0c725a4b9120c45b",
+    "privKey":"92de6fe1ac6c7f8f0a4f98dd904420dda04fd061456cd28d67908be2f7b22d7f"
+  },
+  "worker": {
+    "retryDelay": 5000
+  }
+}
