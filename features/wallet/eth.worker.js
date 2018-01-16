@@ -23,7 +23,7 @@ const [requires, func] = [
       const transaction = await getTransaction(tx);
       const confirmations = blockNumber - transaction.blockNumber;
       const address = transaction.to;
-      const account = await WalletService.getUserByAddress(address);
+      const account = await WalletService.getUserIdByAddress(address);
       if (!account) {
         return;
       }
@@ -45,7 +45,7 @@ const [requires, func] = [
           throat(50, async tx => {
             const transaction = await getTransaction(tx);
             const address = transaction.to;
-            const account = await WalletService.getUserByAddress(address);
+            const account = await WalletService.getUserIdByAddress(address);
             if (account) {
               queue.create('eth', { tx }).save();
             }

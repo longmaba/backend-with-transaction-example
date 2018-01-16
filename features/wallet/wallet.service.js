@@ -1,8 +1,9 @@
 const [requires, func] = [
-  'models.Wallet, models.Transaction, ::crypto, ::ethereumjs-util, web3, ::ethereumjs-tx, ::bignumber.js, error, Fawn, mongoose, ::request-promise',
+  'models.Wallet, models.Transaction, models.User, ::crypto, ::ethereumjs-util, web3, ::ethereumjs-tx, ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js',
   (
     Wallet,
     Transaction,
+    User,
     crypto,
     ethUtils,
     web3,
@@ -11,9 +12,28 @@ const [requires, func] = [
     error,
     Fawn,
     mongoose,
-    request
+    request,
+    validate
   ) => {
     WalletService = {};
+
+    validate.validators.validAddress = async address => {
+      if (!address) {
+        return;
+      }
+      const userId = await Wallet.findOne({ address });
+      if (!userId) {
+        return 'is not valid!';
+      }
+    };
+
+    validate.validators.isBalanceEnough = async ({ userId, total }) => {
+      const { ethBalance } = await WalletService.balance(userId);
+      total = new BigNumber(total);
+      if (total.gt(ethBalance)) {
+        return 'is not enough';
+      }
+    };
 
     WalletService.touchWallet = async id => {
       let wallet = await Wallet.findOne({ userId: id });
@@ -32,7 +52,7 @@ const [requires, func] = [
         privateKey: randbytes
       });
     };
-
+    // TODO: Lock
     WalletService.balance = async id => {
       const transactions = await Transaction.find({
         userId: id
@@ -49,19 +69,22 @@ const [requires, func] = [
       return { ethBalance, cfxBalance };
     };
 
-    WalletService.getUserByAddress = async address => {
+    WalletService.getUserIdByAddress = async address => {
       const wallet = await Wallet.findOne({ address });
       if (!wallet) {
         throw error(404, 'Wallet not found!');
       }
-      return wallet;
+      return wallet.userId;
     };
 
     WalletService.transferToMain = async (fromAddress, amount) => {
       const gas = 21000;
       const gasPrice = await getGasPrice();
       const totalGas = new BigNumber(gas).mul(gasPrice);
-      const wallet = await WalletService.getUserByAddress(fromAddress);
+      const wallet = await Wallet.findOne({ address: fromAddress });
+      if (!wallet) {
+        throw error(404, 'Wallet not found');
+      }
       await transferEth(
         fromAddress,
         config.ethMainAddress.address,
@@ -104,26 +127,51 @@ const [requires, func] = [
     };
 
     WalletService.buyCFX = async (userId, total, address) => {
+      try {
+        await validate.async(
+          { balance: { userId, total }, address },
+          {
+            balance: {
+              presence: true,
+              isBalanceEnough: true
+            },
+            address: {
+              validAddress: true
+            }
+          }
+        );
+      } catch (e) {
+        throw error(400, JSON.stringify(e), true);
+      }
       const { ethBalance } = await WalletService.balance(userId);
+      const user = await User.findOne({ _id: userId });
+      if (address) {
+        const toUserId = await WalletService.getUserIdByAddress(address);
+        if (!toUserId) {
+          throw error(404, 'Address not found!');
+        }
+      }
       total = new BigNumber(total);
       if (total.gt(ethBalance)) {
         throw error(412, 'Not enough balance!');
       }
-      const { price_usd } = await request(
+      const ethInfo = await request(
         'https://api.coinmarketcap.com/v1/ticker/ethereum/'
-      );
+      ).json;
+      const senderWallet = await Wallet.find({ userId });
+      const { price_usd } = ethInfo[0];
       const cfxAmount = new BigNumber(total).times(price_usd).div(1);
       const task = Fawn.Task();
       const txid = mongoose.Types.ObjectId();
       task.save(Transaction, {
-        userId: address ? address : userId,
+        userId: address ? toUserId : userId,
         amount: cfxAmount.toString(),
         date: new Date(),
         key: `cfx:buy:${txid}:${new Date()}:${price_usd}:1`,
         data: {
           type: 'buyCFX',
-          from: userId,
-          to: address ? address : userId,
+          from: senderWallet.address,
+          to: address ? address : senderWallet.address,
           txid,
           ethRate: price_usd
         },
@@ -136,13 +184,29 @@ const [requires, func] = [
         key: `cfx:buy:${txid}:${new Date()}:${price_usd}:1`,
         data: {
           type: 'buyCFX',
-          from: userId,
-          to: address ? address : userId,
+          from: senderWallet.address,
+          to: address ? address : senderWallet.address,
           txid,
           ethRate: price_usd
         },
         currency: 'eth'
       });
+      // Neu mua ho cho chinh ref duoi minh?
+      if (user.refererId) {
+        task.save(Transaction, {
+          userId: user.refererId,
+          amount: total.times(0.07).toString(),
+          date: new Date(),
+          key: `cfx:referralBonus:${txid}:${new Date()}:${userId}`,
+          data: {
+            type: 'referralBonus',
+            from: userId,
+            buyAmount: total,
+            txid
+          },
+          currency: 'cfx'
+        });
+      }
       return await task.run({ useMongoose: true });
     };
 
@@ -151,11 +215,11 @@ const [requires, func] = [
     };
 
     WalletService.depositToAddress = async (address, amount, txid) => {
-      const wallet = await WalletService.getUserByAddress(address);
-      if (!wallet) {
+      const userId = await WalletService.getUserIdByAddress(address);
+      if (!userId) {
         throw error(404, 'No wallet linked to this address');
       }
-      return await WalletService.depositEth(wallet.userId, amount, txid);
+      return await WalletService.depositEth(userId, amount, txid);
     };
 
     return WalletService;

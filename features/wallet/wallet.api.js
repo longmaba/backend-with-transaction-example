@@ -8,7 +8,7 @@ const [requires, func] = [
       checkLoggedIn(),
       wrap(async (req, res, next) => {
         const wallet = await WalletService.touchWallet(req.user._id);
-        res.send(wallet);
+        res.send(wallet.address);
       })
     );
 
