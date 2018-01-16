@@ -34,10 +34,10 @@ Good luck and have fun!</div>
       }
     },
     'email.sendActivation': {
-      require: ['email'],
-      func: email => (to, activationCode) => {
+      require: ['email', 'config'],
+      func: (email, config) => (to, activationCode) => {
         return email.sendMail({
-          text: `Activate your email: ${activationCode}`,
+          text: `Activate your email: ${config.apiUrl}/auth/activate/${activationCode}`,
           from: 'Dike <login@dike.bet>',
           to,
           subject: 'CFX - Account activation'

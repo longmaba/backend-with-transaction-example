@@ -1,6 +1,6 @@
 const [requires, func] = [
-  ' ::express, services.User, checkLoggedIn, api, async-wrapper, error, jwt, md5',
-  (express, UserService, checkLoggedIn, api, wrap, error, jwt, md5) => {
+  ' ::express, services.User, checkLoggedIn, api, async-wrapper, error, jwt, md5, config',
+  (express, UserService, checkLoggedIn, api, wrap, error, jwt, md5, config) => {
     let router = express.Router();
 
     router.post(
@@ -23,7 +23,7 @@ const [requires, func] = [
         const { token } = req.params;
         const user = await jwt.decode(token);
         await UserService.activateAccount(user.id);
-        res.sendStatus(200);
+        res.redirect(`${config.webUrl}/activationSuccess`);
       })
     );
 
@@ -36,7 +36,7 @@ const [requires, func] = [
           id: user._id,
           password: md5(user.password)
         });
-        res.send(token);
+        res.send({ token, id: user._id, email });
       })
     );
 
@@ -44,7 +44,13 @@ const [requires, func] = [
       '/userInfo',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        res.send(req.user);
+        const { _id, email, referralCode, username } = req.user;
+        res.send({
+          id: _id,
+          email,
+          referralCode,
+          username
+        });
       })
     );
 

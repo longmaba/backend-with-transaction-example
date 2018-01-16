@@ -6,8 +6,6 @@ module.exports = (jwt, middlewares, UserService) => {
         return next();
       }
       let data = await jwt.decode(token);
-      console.log(data);
-
       if (!data) {
         return next();
       }

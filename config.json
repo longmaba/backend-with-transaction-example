@@ -10,6 +10,8 @@
       "pass": "Thu6ngay13"
     }
   },
+  "webUrl": "http://localhost:3000",
+  "apiUrl": "http://localhost:8080/api",
   "randomOrg": {
     "apiKey": "44bb4a9a-1e03-4ef5-963a-ab7ce4492923"
   },
