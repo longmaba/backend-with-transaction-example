@@ -145,11 +145,14 @@ const [requires, func] = [
       }
       const { ethBalance } = await WalletService.balance(userId);
       const user = await User.findOne({ _id: userId });
+      let toUserId;
+      let receiver;
       if (address) {
-        const toUserId = await WalletService.getUserIdByAddress(address);
+        toUserId = await WalletService.getUserIdByAddress(address);
         if (!toUserId) {
           throw error(404, 'Address not found!');
         }
+        receiver = await User.findOne({ _id: toUserId });
       }
       total = new BigNumber(total);
       if (total.gt(ethBalance)) {
@@ -192,15 +195,29 @@ const [requires, func] = [
         currency: 'eth'
       });
       // Neu mua ho cho chinh ref duoi minh?
-      if (user.refererId) {
+      if (address && receiver.refererId) {
+        task.save(Transaction, {
+          userId: receiver.refererId,
+          amount: total.times(0.07).toString(),
+          date: new Date(),
+          key: `cfx:referralBonus:${txid}:${new Date()}:${address}`,
+          data: {
+            type: 'referralBonus',
+            from: address,
+            buyAmount: total,
+            txid
+          },
+          currency: 'cfx'
+        });
+      } else if (!address && user.refererId) {
         task.save(Transaction, {
           userId: user.refererId,
           amount: total.times(0.07).toString(),
           date: new Date(),
-          key: `cfx:referralBonus:${txid}:${new Date()}:${userId}`,
+          key: `cfx:referralBonus:${txid}:${new Date()}:${senderWallet.address}`,
           data: {
             type: 'referralBonus',
-            from: userId,
+            from: senderWallet.address,
             buyAmount: total,
             txid
           },
