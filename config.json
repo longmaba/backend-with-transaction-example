@@ -48,7 +48,7 @@
     "username": "foo",
     "password": "bar" 
   },
-  "parityUrl": "http://localhost:8545",
+  "parityUrl": "http://ec2-18-218-61-81.us-east-2.compute.amazonaws.com:8545",
   "ethMainAddress": {
     "address":"0xc69a35d1e973846f9c63a89d0c725a4b9120c45b",
     "privKey":"92de6fe1ac6c7f8f0a4f98dd904420dda04fd061456cd28d67908be2f7b22d7f"

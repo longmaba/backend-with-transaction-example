@@ -2,7 +2,13 @@ const [requires, func] = [
   'services.Wallet, models.Transaction, queue, web3, config, ::bignumber.js, ::throat',
   (WalletService, Transaction, queue, web3, config, BigNumber, throat) => {
     web3.eth.filter('latest').watch((err, result) => {
+      if (err) {
+        return;
+      }
       web3.eth.getBlock(result, (err, block) => {
+        if (err) {
+          return;
+        }
         queue.create('ethTxs', { transactions: block.transactions }).save();
       });
     });
@@ -23,7 +29,10 @@ const [requires, func] = [
       const transaction = await getTransaction(tx);
       const confirmations = blockNumber - transaction.blockNumber;
       const address = transaction.to;
-      const account = await WalletService.getUserIdByAddress(address);
+      let account;
+      try {
+        account = await WalletService.getUserIdByAddress(address);
+      } catch (e) {}
       if (!account) {
         return;
       }
@@ -45,7 +54,10 @@ const [requires, func] = [
           throat(50, async tx => {
             const transaction = await getTransaction(tx);
             const address = transaction.to;
-            const account = await WalletService.getUserIdByAddress(address);
+            let account;
+            try {
+              account = await WalletService.getUserIdByAddress(address);
+            } catch (e) {}
             if (account) {
               queue.create('eth', { tx }).save();
             }
