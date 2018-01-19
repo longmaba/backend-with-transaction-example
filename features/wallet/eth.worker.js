@@ -36,6 +36,7 @@ const [requires, func] = [
       if (!account) {
         return;
       }
+      console.log(confirmations);
       if (confirmations < 6) {
         queue.create('eth', { tx }).delay(config.worker.retryDelay).save();
       } else {

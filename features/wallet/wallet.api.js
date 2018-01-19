@@ -1,6 +1,6 @@
 const [requires, func] = [
-  '::express, checkLoggedIn, api, async-wrapper, error, services.Wallet',
-  (express, checkLoggedIn, api, wrap, error, WalletService) => {
+  '::express, checkLoggedIn, api, async-wrapper, error, services.Wallet, queue, web3',
+  (express, checkLoggedIn, api, wrap, error, WalletService, queue, web3) => {
     let router = express.Router();
 
     router.get(
@@ -17,7 +17,7 @@ const [requires, func] = [
       checkLoggedIn(),
       wrap(async (req, res, next) => {
         const { amount, address } = req.body;
-        await WalletService.buyCFX(req.user._id, amount, address);
+        await WalletService.buyCFX(req.user, amount, address);
         res.sendStatus(200);
       })
     );
@@ -26,7 +26,25 @@ const [requires, func] = [
       '/balance',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        res.send(await WalletService.balance(req.user._id));
+        const { cfxBalance, ethBalance } = await WalletService.balance(
+          req.user._id
+        );
+        res.send({
+          cfxBalance: cfxBalance.toFixed(8),
+          ethBalance: web3.fromWei(ethBalance, 'ether').toFixed(8)
+        });
+      })
+    );
+
+    router.get(
+      '/check/eth/:tx',
+      wrap(async (req, res, next) => {
+        await queue
+          .create('ethRetry', {
+            tx: req.params.tx
+          })
+          .save();
+        res.sendStatus(200);
       })
     );
 

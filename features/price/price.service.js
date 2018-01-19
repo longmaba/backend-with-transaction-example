@@ -8,7 +8,7 @@ const [requires, func] = [
         'https://api.coinmarketcap.com/v1/ticker/ethereum/'
       ).json();
       const { price_usd } = ethInfo[0];
-      const ethRate = new BigNumber(1).div(price_usd);
+      const ethRate = new BigNumber(1).div(price_usd).toFixed(8);
       return { ethRate, cfxPrice: 1 };
     };
 

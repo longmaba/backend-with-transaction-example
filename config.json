@@ -48,10 +48,10 @@
     "username": "foo",
     "password": "bar" 
   },
-  "parityUrl": "http://ec2-18-218-61-81.us-east-2.compute.amazonaws.com:8545",
+  "parityUrl": "http://localhost:8545",
   "ethMainAddress": {
-    "address":"0xc69a35d1e973846f9c63a89d0c725a4b9120c45b",
-    "privKey":"92de6fe1ac6c7f8f0a4f98dd904420dda04fd061456cd28d67908be2f7b22d7f"
+    "address":"0xcf10cf44dfba5494387c9495c609b918551397ef",
+    "privKey":"9fe81061e19bfbd20c737b2c46521f24555e50919c58f4fdd1105d0a8cc3ba54"
   },
   "worker": {
     "retryDelay": 5000

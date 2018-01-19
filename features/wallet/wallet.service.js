@@ -1,5 +1,6 @@
 const [requires, func] = [
-  'models.Wallet, models.Transaction, models.User, ::crypto, ::ethereumjs-util, web3, ::ethereumjs-tx, ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js',
+  `models.Wallet, models.Transaction, models.User, ::crypto, ::ethereumjs-util, web3, ::ethereumjs-tx,
+  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config`,
   (
     Wallet,
     Transaction,
@@ -13,7 +14,8 @@ const [requires, func] = [
     Fawn,
     mongoose,
     request,
-    validate
+    validate,
+    config
   ) => {
     WalletService = {};
 
@@ -27,9 +29,8 @@ const [requires, func] = [
       }
     };
 
-    validate.validators.isBalanceEnough = async ({ userId, total }) => {
-      const { ethBalance } = await WalletService.balance(userId);
-      total = new BigNumber(total);
+    validate.validators.isBalanceEnough = async ({ user, total }) => {
+      const { ethBalance } = await WalletService.balance(user);
       if (total.gt(ethBalance)) {
         return 'is not enough';
       }
@@ -110,6 +111,27 @@ const [requires, func] = [
       return await sendRawTransaction(serializedTx);
     };
 
+    const sendRawTransaction = tx =>
+      new Promise((resolve, reject) => {
+        web3.eth.sendRawTransaction('0x' + tx.toString('hex'), (err, hash) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(hash);
+        });
+      });
+
+    const getGasPrice = () =>
+      new Promise((resolve, reject) => {
+        web3.eth.getGasPrice((err, price) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(price);
+          }
+        });
+      });
+
     WalletService.depositEth = async (userId, amount, txid) => {
       try {
         return await Transaction.create({
@@ -126,13 +148,32 @@ const [requires, func] = [
       } catch (e) {}
     };
 
-    WalletService.buyCFX = async (userId, total, address) => {
+    WalletService.getUserByAddress = async address => {
+      const id = await WalletService.getUserIdByAddress(address);
+      return await User.findById(id);
+    };
+
+    const getEthPriceInUsd = async () => {
+      const ethInfo = await request(
+        'https://api.coinmarketcap.com/v1/ticker/ethereum/'
+      ).json();
+      return ethInfo[0].price_usd;
+    };
+
+    WalletService.buyCFX = async (user, total, address) => {
+      const senderId = user._id;
+      const senderAddress = (await Wallet.findOne({ userId: senderId }))
+        .address;
+      let receiver = user;
+      total = new BigNumber(total);
       try {
         await validate.async(
-          { balance: { userId, total }, address },
+          { total, balance: { user: user._id, total }, address },
           {
+            total: {
+              presence: true
+            },
             balance: {
-              presence: true,
               isBalanceEnough: true
             },
             address: {
@@ -143,81 +184,56 @@ const [requires, func] = [
       } catch (e) {
         throw error(400, JSON.stringify(e), true);
       }
-      const { ethBalance } = await WalletService.balance(userId);
-      const user = await User.findOne({ _id: userId });
-      let toUserId;
-      let receiver;
+
       if (address) {
-        toUserId = await WalletService.getUserIdByAddress(address);
-        if (!toUserId) {
-          throw error(404, 'Address not found!');
-        }
-        receiver = await User.findOne({ _id: toUserId });
+        receiver = WalletService.getUserByAddress(address);
+      } else {
+        address = senderAddress;
       }
-      total = new BigNumber(total);
-      if (total.gt(ethBalance)) {
-        throw error(412, 'Not enough balance!');
-      }
-      const ethInfo = await request(
-        'https://api.coinmarketcap.com/v1/ticker/ethereum/'
-      ).json;
-      const senderWallet = await Wallet.find({ userId });
-      const { price_usd } = ethInfo[0];
+
+
+      const price_usd = await getEthPriceInUsd();
       const cfxAmount = new BigNumber(total).times(price_usd).div(1);
+
       const task = Fawn.Task();
       const txid = mongoose.Types.ObjectId();
       task.save(Transaction, {
-        userId: address ? toUserId : userId,
+        userId: receiver._id,
         amount: cfxAmount.toString(),
         date: new Date(),
         key: `cfx:buy:${txid}:${new Date()}:${price_usd}:1`,
         data: {
           type: 'buyCFX',
-          from: senderWallet.address,
-          to: address ? address : senderWallet.address,
+          from: senderAddress,
+          to: address,
           txid,
           ethRate: price_usd
         },
         currency: 'cfx'
       });
       task.save(Transaction, {
-        userId: userId,
-        amount: total.neg().toString(),
+        userId: senderId,
+        amount: web3.toWei(total, 'ether').neg().toString(),
         date: new Date(),
         key: `cfx:buy:${txid}:${new Date()}:${price_usd}:1`,
         data: {
           type: 'buyCFX',
-          from: senderWallet.address,
-          to: address ? address : senderWallet.address,
+          from: senderAddress,
+          to: address,
           txid,
           ethRate: price_usd
         },
         currency: 'eth'
       });
-      // Neu mua ho cho chinh ref duoi minh?
-      if (address && receiver.refererId) {
+      if (receiver.refererId) {
         task.save(Transaction, {
           userId: receiver.refererId,
-          amount: total.times(0.07).toString(),
+          amount: new BigNumber(cfxAmount).times(0.07).toString(),
           date: new Date(),
           key: `cfx:referralBonus:${txid}:${new Date()}:${address}`,
           data: {
             type: 'referralBonus',
             from: address,
-            buyAmount: total,
-            txid
-          },
-          currency: 'cfx'
-        });
-      } else if (!address && user.refererId) {
-        task.save(Transaction, {
-          userId: user.refererId,
-          amount: total.times(0.07).toString(),
-          date: new Date(),
-          key: `cfx:referralBonus:${txid}:${new Date()}:${senderWallet.address}`,
-          data: {
-            type: 'referralBonus',
-            from: senderWallet.address,
             buyAmount: total,
             txid
           },
