@@ -52,7 +52,14 @@ const [requires, func] = [
       '/transactions',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        res.send(await WalletService.getTransactions(req.user._id));
+        let transactions = await WalletService.getTransactions(req.user._id);
+        transactions = transactions.map(t => {
+          if (t.currency === 'eth') {
+            t.amount = web3.fromWei(t.amount, 'ether');
+          }
+          return t;
+        });
+        res.send(transactions);
       })
     );
 

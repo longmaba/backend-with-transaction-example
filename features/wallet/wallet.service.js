@@ -191,7 +191,6 @@ const [requires, func] = [
         address = senderAddress;
       }
 
-
       const price_usd = await getEthPriceInUsd();
       const cfxAmount = new BigNumber(total).times(price_usd).div(1);
 
@@ -244,7 +243,7 @@ const [requires, func] = [
     };
 
     WalletService.getTransactions = async userId => {
-      return await Transaction.find({ userId });
+      return await Transaction.find({ userId }).sort({ date: -1 });
     };
 
     WalletService.depositToAddress = async (address, amount, txid) => {
