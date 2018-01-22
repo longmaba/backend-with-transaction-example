@@ -224,7 +224,7 @@ const [requires, func] = [
         price_usd = await getCryptoPriceInUsd('bitcoin');
       }
 
-      const cfxAmount = new BigNumber(total).times(price_usd).div(1);
+      const cfxAmount = new BigNumber(total).times(price_usd).div(config.cfxPrice);
 
       const task = Fawn.Task();
       const txid = mongoose.Types.ObjectId();
@@ -256,9 +256,9 @@ const [requires, func] = [
         },
         currency
       });
-      if (receiver.refererId) {
+      if (receiver.parentId) {
         task.save(Transaction, {
-          userId: receiver.refererId,
+          userId: receiver.parentId,
           amount: new BigNumber(cfxAmount).times(0.07).toString(),
           date: new Date(),
           key: `cfx:referralBonus:${txid}:${Date.now()}:${address}`,

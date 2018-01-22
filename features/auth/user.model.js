@@ -1,10 +1,10 @@
 module.exports = (mongoose, NestedSetPlugin) => {
-  var schema = new Schema({
+  var schema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
     referralCode: String,
-    refererId: mongoose.Schema.ObjectId,
+    parentId: mongoose.Schema.ObjectId,
     isActivated: Boolean
   });
   schema.plugin(NestedSetPlugin);
