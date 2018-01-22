@@ -29,9 +29,17 @@ const [requires, func] = [
       }
     };
 
-    validate.validators.isBalanceEnough = async ({ user, total }) => {
+    validate.validators.ethBalanceEnough = async ({ user, total }) => {
       const { ethBalance } = await WalletService.balance(user);
+      total = web3.toWei(total, 'ether');
       if (total.gt(ethBalance)) {
+        return 'is not enough';
+      }
+    };
+
+    validate.validators.btcBalanceEnough = async ({ user, total }) => {
+      const { btcBalance } = await WalletService.balance(user);
+      if (total.gt(btcBalance)) {
         return 'is not enough';
       }
     };
@@ -53,6 +61,7 @@ const [requires, func] = [
         privateKey: randbytes
       });
     };
+
     // TODO: Lock
     WalletService.balance = async id => {
       const transactions = await Transaction.find({
@@ -60,14 +69,23 @@ const [requires, func] = [
       });
       let ethBalance = new BigNumber(0);
       let cfxBalance = new BigNumber(0);
+      let btcBalance = new BigNumber(0);
       for (let transaction of transactions) {
-        if (transaction.currency === 'eth') {
-          ethBalance = ethBalance.plus(transaction.amount);
-        } else if (transaction.currency === 'cfx') {
-          cfxBalance = cfxBalance.plus(transaction.amount);
+        switch (transaction.currency) {
+          case 'eth':
+            ethBalance = ethBalance.plus(transaction.amount);
+            break;
+          case 'cfx':
+            cfxBalance = cfxBalance.plus(transaction.amount);
+            break;
+          case 'btc':
+            btcBalance = btcBalance.plus(transaction.amount);
+            break;
+          default:
+            break;
         }
       }
-      return { ethBalance, cfxBalance };
+      return { ethBalance, cfxBalance, btcBalance };
     };
 
     WalletService.getUserIdByAddress = async address => {
@@ -148,50 +166,64 @@ const [requires, func] = [
       } catch (e) {}
     };
 
+    WalletService.findAccountByBtcAddress = async address => {
+      const wallet = await Wallet.findOne({
+        btcAddress: address
+      });
+      return wallet;
+    };
+
+    WalletService.depositBtcToAddress = async (address, amount, txid) => {
+      const wallet = await btc.findAccountByBtcAddress(address);
+      if (!wallet) {
+        throw new Error('No account linked to this address');
+      }
+      return await WalletService.depositBtc(wallet.account, amount, txid);
+    };
+
+    WalletService.depositBtc = async (account, amount, txid) => {
+      try {
+        return await Transaction.create({
+          account,
+          amount,
+          date: new Date(),
+          key: `btc:deposit:${txid}`,
+          currency: 'btc'
+        });
+      } catch (e) {}
+    };
+
     WalletService.getUserByAddress = async address => {
       const id = await WalletService.getUserIdByAddress(address);
       return await User.findById(id);
     };
 
-    const getEthPriceInUsd = async () => {
-      const ethInfo = await request(
-        'https://api.coinmarketcap.com/v1/ticker/ethereum/'
+    const getCryptoPriceInUsd = async currency => {
+      const priceData = await request(
+        `https://api.coinmarketcap.com/v1/ticker/${currency}/`
       ).json();
-      return ethInfo[0].price_usd;
+      return priceData[0].price_usd;
     };
 
-    WalletService.buyCFX = async (user, total, address) => {
+    WalletService.buyCFX = async (user, total, address, currency) => {
       const senderId = user._id;
       const senderAddress = (await Wallet.findOne({ userId: senderId }))
         .address;
       let receiver = user;
-      total = new BigNumber(total);
-      try {
-        await validate.async(
-          { total, balance: { user: user._id, total }, address },
-          {
-            total: {
-              presence: true
-            },
-            balance: {
-              isBalanceEnough: true
-            },
-            address: {
-              validAddress: true
-            }
-          }
-        );
-      } catch (e) {
-        throw error(400, JSON.stringify(e), true);
-      }
-
+      let cryptoAmount;
+      let price_usd;
       if (address) {
-        receiver = WalletService.getUserByAddress(address);
+        receiver = await WalletService.getUserByAddress(address);
       } else {
         address = senderAddress;
       }
+      if (currency === 'eth') {
+        cryptoAmount = web3.toWei(total, 'ether').neg().toString();
+        price_usd = await getCryptoPriceInUsd('ethereum');
+      } else if (currency === 'btc') {
+        price_usd = await getCryptoPriceInUsd('bitcoin');
+      }
 
-      const price_usd = await getEthPriceInUsd();
       const cfxAmount = new BigNumber(total).times(price_usd).div(1);
 
       const task = Fawn.Task();
@@ -200,7 +232,7 @@ const [requires, func] = [
         userId: receiver._id,
         amount: cfxAmount.toString(),
         date: new Date(),
-        key: `cfx:buy:${txid}:${new Date()}:${price_usd}:1`,
+        key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:1`,
         data: {
           type: 'buyCFX',
           from: senderAddress,
@@ -212,9 +244,9 @@ const [requires, func] = [
       });
       task.save(Transaction, {
         userId: senderId,
-        amount: web3.toWei(total, 'ether').neg().toString(),
+        amount: cryptoAmount,
         date: new Date(),
-        key: `cfx:buy:${txid}:${new Date()}:${price_usd}:1`,
+        key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:1`,
         data: {
           type: 'buyCFX',
           from: senderAddress,
@@ -222,14 +254,14 @@ const [requires, func] = [
           txid,
           ethRate: price_usd
         },
-        currency: 'eth'
+        currency
       });
       if (receiver.refererId) {
         task.save(Transaction, {
           userId: receiver.refererId,
           amount: new BigNumber(cfxAmount).times(0.07).toString(),
           date: new Date(),
-          key: `cfx:referralBonus:${txid}:${new Date()}:${address}`,
+          key: `cfx:referralBonus:${txid}:${Date.now()}:${address}`,
           data: {
             type: 'referralBonus',
             from: address,
@@ -240,6 +272,52 @@ const [requires, func] = [
         });
       }
       return await task.run({ useMongoose: true });
+    };
+
+    WalletService.buyCfxWithEthereum = async (user, total, address) => {
+      total = new BigNumber(total);
+      try {
+        await validate.async(
+          { total, balance: { user: user._id, total }, address },
+          {
+            total: {
+              presence: true
+            },
+            balance: {
+              ethBalanceEnough: true
+            },
+            address: {
+              validAddress: true
+            }
+          }
+        );
+      } catch (e) {
+        throw error(400, JSON.stringify(e), true);
+      }
+      return await WalletService.buyCFX(user, total, address, 'eth');
+    };
+
+    WalletService.buyCfxWithBitcoin = async (user, total, address) => {
+      total = new BigNumber(total);
+      try {
+        await validate.async(
+          { total, balance: { user: user._id, total }, address },
+          {
+            total: {
+              presence: true
+            },
+            balance: {
+              btcBalanceEnough: true
+            },
+            address: {
+              validAddress: true
+            }
+          }
+        );
+      } catch (e) {
+        throw error(400, JSON.stringify(e), true);
+      }
+      return await WalletService.buyCFX(user, total, address, 'btc');
     };
 
     WalletService.getTransactions = async userId => {

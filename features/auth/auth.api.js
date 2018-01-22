@@ -36,7 +36,7 @@ const [requires, func] = [
           id: user._id,
           password: md5(user.password)
         });
-        res.send({ token, id: user._id, email });
+        res.send({ token, id: user._id, email, referralCode: user.referralCode });
       })
     );
 

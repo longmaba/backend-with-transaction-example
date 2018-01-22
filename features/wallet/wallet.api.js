@@ -16,8 +16,8 @@ const [requires, func] = [
       '/buyCFX',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        const { amount, address } = req.body;
-        await WalletService.buyCFX(req.user, amount, address);
+        const { amount, address, currency } = req.body;
+        await WalletService.buyCfxWithEthereum(req.user, amount, address);
         res.sendStatus(200);
       })
     );
@@ -26,12 +26,15 @@ const [requires, func] = [
       '/balance',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        const { cfxBalance, ethBalance } = await WalletService.balance(
-          req.user._id
-        );
+        const {
+          cfxBalance,
+          ethBalance,
+          btcBalance
+        } = await WalletService.balance(req.user._id);
         res.send({
           cfxBalance: cfxBalance.toFixed(8),
-          ethBalance: web3.fromWei(ethBalance, 'ether').toFixed(8)
+          ethBalance: web3.fromWei(ethBalance, 'ether').toFixed(8),
+          btcBalance: btcBalance.toFixed(8)
         });
       })
     );
