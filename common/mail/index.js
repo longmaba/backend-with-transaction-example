@@ -43,7 +43,35 @@ Good luck and have fun!</div>
           subject: 'CFX - Account activation'
         });
       }
+    },
+    'email.sendResetPassword': {
+      require: ['email', 'config'],
+      func: (email, config) => (to, activationCode) => {
+        return email.sendMail({
+          text: `Click on this link to reset your password: ${config.apiUrl}/auth/resetPassword/${activationCode}`,
+          from: 'Dike <login@dike.bet>',
+          to,
+          subject: 'CFX - Reset Password'
+        });
+      }
+    },
+    'email.sendNewPassword': {
+      require: ['email', 'config'],
+      func: (email, config) => (to, password) => {
+        return email.sendMail({
+          text: `Your new password is: ${password}. Please change it as soon as possible.`,
+          from: 'Dike <login@dike.bet>',
+          to,
+          subject: 'CFX - New Password'
+        });
+      }
     }
   },
-  exports: ['email', 'email.sendOTP', 'email.sendActivation']
+  exports: [
+    'email',
+    'email.sendOTP',
+    'email.sendActivation',
+    'email.sendResetPassword',
+    'email.sendNewPassword'
+  ]
 };

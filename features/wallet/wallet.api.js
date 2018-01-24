@@ -29,27 +29,28 @@ const [requires, func] = [
       checkLoggedIn(),
       checkTfa(),
       wrap(async (req, res, next) => {
-        let { amount, address, currency } = req.body;
+        let { total, address, currency } = req.body;
         const { ethToUsd, btcToUsd } = await PriceService.getCurrentPrices();
-        amount = new BigNumber(amount);
+        total = new BigNumber(total);
         let totalInUsd;
         currency = currency.toLowerCase();
         if (currency === 'eth') {
-          totalInUsd = amount.times(ethToUsd);
+          totalInUsd = total.times(ethToUsd);
         } else if (currency === 'btc') {
-          totalInUsd = amount.times(btcToUsd);
+          totalInUsd = total.times(btcToUsd);
         }
         if (totalInUsd.gte(2000)) {
-          amount = amount.times(1.03);
+          total = total.times(1.03);
         } else if (totalInUsd.gte(5000)) {
-          amount = amount.times(1.05);
+          total = total.times(1.05);
         } else if (totalInUsd.gte(10000)) {
-          amount = amount.times(1.07);
+          total = total.times(1.07);
         }
+        total = total.toFixed(8);
         if (currency === 'eth') {
-          await WalletService.buyCfxWithEthereum(req.user, amount, address);
+          await WalletService.buyCfxWithEthereum(req.user, total, address);
         } else if (currency === 'btc') {
-          await WalletService.buyCfxWithBitcoin(req.user, amount, address);
+          await WalletService.buyCfxWithBitcoin(req.user, total, address);
         }
         res.sendStatus(200);
       })

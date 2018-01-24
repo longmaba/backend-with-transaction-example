@@ -40,6 +40,25 @@ const [requires, func] = [
     );
 
     router.post(
+      '/resetPassword',
+      wrap(async (req, res, next) => {
+        const { email } = req.body;
+        await UserService.resetPassword(email);
+        res.sendStatus(200);
+      })
+    );
+
+    router.get(
+      '/resetPassword/:token',
+      wrap(async (req, res, next) => {
+        const { token } = req.params;
+        const user = await jwt.decode(token);
+        await UserService.generateNewPassword(user.id);
+        res.redirect(`${config.webUrl}/resetPassword/success`);
+      })
+    );
+
+    router.post(
       '/login',
       wrap(async (req, res, next) => {
         const { email, password } = req.body;
@@ -75,23 +94,17 @@ const [requires, func] = [
 
     router.get(
       '/getDownline',
+      checkLoggedIn(),
       wrap(async (req, res, next) => {
         const data = await UserService.getDownline(req.user._id);
-        let results = {};
-        for (let key in data) {
-          data[key].map(d => {
-            results[key] = results[key]
-              ? [...results[key], { ...d.toObject(), password: undefined }]
-              : [{ ...d.toObject(), password: undefined }];
-          });
-        }
-        res.send(results);
+        res.send(data);
       })
     );
 
     router.post(
       '/changePassword',
       checkLoggedIn(),
+      checkTfa(),
       wrap(async (req, res, next) => {
         const { oldPassword, newPassword } = req.body;
         await UserService.changePassword(

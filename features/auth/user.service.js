@@ -1,6 +1,16 @@
 const [requires, func] = [
-  'models.User, error, ::validate.js, ::generate-password, jwt, email.sendActivation, md5',
-  (User, error, validate, generator, jwt, sendActivationEmail, md5) => {
+  'models.User, error, ::validate.js, ::generate-password, jwt, email.sendActivation, email.sendResetPassword, email.sendNewPassword, md5',
+  (
+    User,
+    error,
+    validate,
+    generator,
+    jwt,
+    sendActivationEmail,
+    sendResetPasswordEmail,
+    sendNewPasswordEmail,
+    md5
+  ) => {
     const UserService = {};
 
     validate.validators.uniqueEmail = async email => {
@@ -95,6 +105,29 @@ const [requires, func] = [
       return user;
     };
 
+    UserService.resetPassword = async email => {
+      const user = await User.findOne({ email });
+      console.log(user);
+      if (!user) {
+        throw error(404, 'Email does not exist!');
+      }
+      const validationCode = await jwt.encode({ id: user._id }, '1h');
+      sendResetPasswordEmail(email, validationCode);
+    };
+
+    UserService.generateNewPassword = async id => {
+      const user = await User.findById(id);
+      if (!user) {
+        throw error(404, 'User does not exist!');
+      }
+      const password = generator.generate({
+        length: 10
+      });
+      user.password = password;
+      await user.save();
+      sendNewPasswordEmail(user.email, password);
+    };
+
     UserService.changePassword = async (id, oldPassword, newPassword) => {
       const user = await User.findById(id);
       if (!user) {
@@ -161,6 +194,34 @@ const [requires, func] = [
       return levels;
     };
 
+    const makeTree = (arr, limit = Infinity) => {
+      arr = arr.map(i => ({
+        id: i._id,
+        username: i.username,
+        email: i.email,
+        parentId: i.parentId,
+        lft: i.lft,
+        rgt: i.rgt
+      }));
+      const rootNode = arr.filter(i => i.lft === 1)[0];
+      rootNode.depth = 0;
+      const populateNode = node => {
+        if (node.depth >= limit) {
+          return;
+        }
+        const children = arr.filter(i => node.id.equals(i.parentId));
+        for (let child of children) {
+          child.depth = node.depth + 1;
+          populateNode(child);
+        }
+        if (children.length > 0) {
+          node.children = children;
+        }
+      };
+      populateNode(rootNode);
+      return rootNode;
+    };
+
     UserService.getDownline = id =>
       new Promise(async (resolve, reject) => {
         const user = await User.findById(id);
@@ -168,11 +229,11 @@ const [requires, func] = [
           return reject(error(404, 'User does not exist!'));
         }
         User.rebuildTree(user, 1, function() {
-          user.selfAndDescendants(function(err, data) {
+          user.descendants(function(err, data) {
             if (err) {
               return reject(err);
             }
-            resolve(levelize(data, 5));
+            resolve(makeTree([user, ...data], 5));
           });
         });
       });

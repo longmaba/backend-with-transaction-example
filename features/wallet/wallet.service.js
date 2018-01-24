@@ -224,7 +224,10 @@ const [requires, func] = [
         price_usd = await getCryptoPriceInUsd('bitcoin');
       }
 
-      const cfxAmount = new BigNumber(total).times(price_usd).div(config.cfxPrice);
+      const cfxAmount = new BigNumber(total)
+        .times(price_usd)
+        .div(config.cfxPrice)
+        .toFixed(8);
 
       const task = Fawn.Task();
       const txid = mongoose.Types.ObjectId();
