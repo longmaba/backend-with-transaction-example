@@ -3,11 +3,11 @@
   "mongodbUrl": "mongodb://localhost/cfx",
   "bodyLimit": "100kb",
   "smtp": {
-    "host": "mail.dike.bet",
+    "host": "smtp.sendgrid.net",
     "port": 587,
     "auth": {
-      "user": "login@dike.bet",
-      "pass": "Thu6ngay13"
+      "user": "apikey",
+      "pass": "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"
     }
   },
   "webUrl": "http://localhost:3000",

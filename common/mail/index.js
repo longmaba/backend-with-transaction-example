@@ -14,7 +14,7 @@ module.exports = {
       func: email => (to, otp) => {
         return email.sendMail({
           text: `Use this code to login: ${otp}`,
-          from: 'Dike <login@dike.bet>',
+          from: 'CoinForex Authentication <login@coinforex.io>',
           to,
           subject: '[Dike] One-time Passcode to Login',
           html: `<div style="background-color:#F3F3F3"><div style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 580px; padding: 10px; background-color: #032F5B; border-radius: 4px; font-family:Verdana, sans-serif">
@@ -38,7 +38,7 @@ Good luck and have fun!</div>
       func: (email, config) => (to, activationCode) => {
         return email.sendMail({
           text: `Activate your email`,
-          from: 'Dike <login@dike.bet>',
+          from: 'CoinForex Authentication <login@coinforex.io>',
           to,
           subject: 'CFX - Account activation',
           html: `<div style="background-color: #eee;">
