@@ -5,7 +5,8 @@ module.exports = (mongoose, NestedSetPlugin) => {
     password: String,
     referralCode: String,
     parentId: mongoose.Schema.ObjectId,
-    isActivated: Boolean
+    isActivated: Boolean,
+    tfaSecret: String
   });
   schema.plugin(NestedSetPlugin);
   return mongoose.model('User', schema, 'user');

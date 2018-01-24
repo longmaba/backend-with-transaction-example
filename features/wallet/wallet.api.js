@@ -1,6 +1,18 @@
 const [requires, func] = [
-  '::express, checkLoggedIn, api, async-wrapper, error, services.Wallet, queue, web3',
-  (express, checkLoggedIn, api, wrap, error, WalletService, queue, web3) => {
+  '::express, checkLoggedIn,checkTfa, api, async-wrapper, error, services.Wallet, services.Price, queue, web3, ::bignumber.js',
+  (
+    express,
+    checkLoggedIn,
+    checkTfa,
+    api,
+    wrap,
+    error,
+    WalletService,
+    PriceService,
+    queue,
+    web3,
+    BigNumber
+  ) => {
     let router = express.Router();
 
     router.get(
@@ -15,9 +27,30 @@ const [requires, func] = [
     router.post(
       '/buyCFX',
       checkLoggedIn(),
+      checkTfa(),
       wrap(async (req, res, next) => {
-        const { amount, address, currency } = req.body;
-        await WalletService.buyCfxWithEthereum(req.user, amount, address);
+        let { amount, address, currency } = req.body;
+        const { ethToUsd, btcToUsd } = await PriceService.getCurrentPrices();
+        amount = new BigNumber(amount);
+        let totalInUsd;
+        currency = currency.toLowerCase();
+        if (currency === 'eth') {
+          totalInUsd = amount.times(ethToUsd);
+        } else if (currency === 'btc') {
+          totalInUsd = amount.times(btcToUsd);
+        }
+        if (totalInUsd.gte(2000)) {
+          amount = amount.times(1.03);
+        } else if (totalInUsd.gte(5000)) {
+          amount = amount.times(1.05);
+        } else if (totalInUsd.gte(10000)) {
+          amount = amount.times(1.07);
+        }
+        if (currency === 'eth') {
+          await WalletService.buyCfxWithEthereum(req.user, amount, address);
+        } else if (currency === 'btc') {
+          await WalletService.buyCfxWithBitcoin(req.user, amount, address);
+        }
         res.sendStatus(200);
       })
     );

@@ -265,7 +265,7 @@ const [requires, func] = [
           data: {
             type: 'referralBonus',
             from: address,
-            buyAmount: total,
+            buyAmount: cfxAmount,
             txid
           },
           currency: 'cfx'

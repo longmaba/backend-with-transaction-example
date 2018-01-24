@@ -65,7 +65,7 @@ const [requires, func] = [
         email,
         password,
         username,
-        referrerId: referrer && referrer._id,
+        parentId: referrer && referrer._id,
         referralCode: ownReferralCode,
         isActivated: false
       });
@@ -95,6 +95,23 @@ const [requires, func] = [
       return user;
     };
 
+    UserService.changePassword = async (id, oldPassword, newPassword) => {
+      const user = await User.findById(id);
+      if (!user) {
+        throw error(404, 'User does not exist!');
+      }
+      if (newPassword.length < 7 || newPassword.length > 100) {
+        throw error(400, 'Password length should be between 7 and 100!');
+      }
+      if (user.password === oldPassword) {
+        user.password = newPassword;
+      } else {
+        throw error(400, 'Incorrect password!');
+      }
+      await user.save();
+      return user;
+    };
+
     UserService.checkCredentials = async (email, password) => {
       const user = await User.findOne({ email, password });
       if (!user) {
@@ -116,6 +133,49 @@ const [requires, func] = [
         referrerId: user.referrerId
       };
     };
+
+    const levelize = (arr, limit = Infinity) => {
+      const levels = {};
+      const rootNode = arr.filter(i => i.lft === 1)[0];
+      levels[0] = [rootNode];
+
+      let currentLevel = 0;
+
+      while (true) {
+        const parentIds = levels[currentLevel].map(i => i._id);
+        currentLevel++;
+        const currentLevelList = [
+          ...arr.filter(i => {
+            for (let parentId of parentIds) {
+              if (parentId.equals(i.parentId)) return true;
+            }
+            return false;
+          })
+        ];
+        if (currentLevelList.length === 0 || currentLevel > limit) {
+          break;
+        } else {
+          levels[currentLevel] = currentLevelList;
+        }
+      }
+      return levels;
+    };
+
+    UserService.getDownline = id =>
+      new Promise(async (resolve, reject) => {
+        const user = await User.findById(id);
+        if (!user) {
+          return reject(error(404, 'User does not exist!'));
+        }
+        User.rebuildTree(user, 1, function() {
+          user.selfAndDescendants(function(err, data) {
+            if (err) {
+              return reject(err);
+            }
+            resolve(levelize(data, 5));
+          });
+        });
+      });
 
     return UserService;
   }
