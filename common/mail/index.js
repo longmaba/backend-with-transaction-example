@@ -37,10 +37,37 @@ Good luck and have fun!</div>
       require: ['email', 'config'],
       func: (email, config) => (to, activationCode) => {
         return email.sendMail({
-          text: `Activate your email: ${config.apiUrl}/auth/activate/${activationCode}`,
+          text: `Activate your email`,
           from: 'Dike <login@dike.bet>',
           to,
-          subject: 'CFX - Account activation'
+          subject: 'CFX - Account activation',
+          html: `<div style="background-color: #eee;">
+<div style="background-color: #eee; padding: 50px 0;">
+<div style="width: 600px; margin: 0 auto;">
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinfx.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="./CFX-key.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
+<p>Hello,</p>
+<p>Welcome to CoinFX! You're only one step away from being successful! Please follow the link below to activate your account:</p>
+<p><a href="${config.apiUrl}/auth/activate/${activationCode}" target="_blank" rel="noopener">${config.apiUrl}/auth/activate/${activationCode}</a></p>
+<p>If clicking the link doesn't work, please copy the link and paste it into your browser and hit enter.</p>
+<p>CoinFX</p>
+<p>This email is sent automatically.</p>
+</div>
+<div style="padding: 15px 0; background-color: #333333; text-align: center;">
+<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">support@cfx.io</a></p>
+<div style="color: #535353; font-size: 12px;">
+<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">www.coinfx.io</a></p>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>`
         });
       }
     },
@@ -51,7 +78,35 @@ Good luck and have fun!</div>
           text: `Click on this link to reset your password: ${config.apiUrl}/auth/resetPassword/${activationCode}`,
           from: 'Dike <login@dike.bet>',
           to,
-          subject: 'CFX - Reset Password'
+          subject: 'CFX - Reset Password',
+          html: `<div style="background-color: #eee;">
+<div style="background-color: #eee; padding: 50px 0;">
+<div style="width: 600px; margin: 0 auto;">
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinfx.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://static.wixstatic.com/media/3a17d1_eec1082b1e26436987a0d1ecd4766880~mv2_d_2048_2048_s_2.png/v1/fill/w_160,h_160,al_c,usm_0.66_1.00_0.01/3a17d1_eec1082b1e26436987a0d1ecd4766880~mv2_d_2048_2048_s_2.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
+<p>Hello,</p>
+<p>We've just received your request to reset password. Please follow the link below:</p>
+<p><a href="${config.apiUrl}/auth/resetPassword/${activationCode}" target="_blank" rel="noopener">${config.apiUrl}/auth/resetPassword/${activationCode}</a></p>
+<p>If clicking the link doesn't work, please copy the link and paste it into your browser and hit enter.</p>
+<p>If this request was not made by you, please ignore this.</p>
+<p>CoinFX</p>
+<p>This email is sent automatically.</p>
+</div>
+<div style="padding: 15px 0; background-color: #333333; text-align: center;">
+<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">support@cfx.io</a></p>
+<div style="color: #535353; font-size: 12px;">
+<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">www.coinfx.io</a></p>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>`
         });
       }
     },
@@ -62,7 +117,33 @@ Good luck and have fun!</div>
           text: `Your new password is: ${password}. Please change it as soon as possible.`,
           from: 'Dike <login@dike.bet>',
           to,
-          subject: 'CFX - New Password'
+          subject: 'CFX - New Password',
+          html: `<div style="background-color: #eee;">
+<div style="background-color: #eee; padding: 50px 0;">
+<div style="width: 600px; margin: 0 auto;">
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinfx.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="./CFX-key.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
+<p>Hello,</p>
+<p>You have successfully reset your password! Here is your new password: ${password}</p>
+<p>Please change this password right after logging in.</p>
+<p>CoinFX</p>
+<p>This email is sent automatically.</p>
+</div>
+<div style="padding: 15px 0; background-color: #333333; text-align: center;">
+<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">support@cfx.io</a></p>
+<div style="color: #535353; font-size: 12px;">
+<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">www.coinfx.io</a></p>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>
+<div>&nbsp;</div>
+</div>`
         });
       }
     }

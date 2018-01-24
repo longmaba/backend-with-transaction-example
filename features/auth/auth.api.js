@@ -61,19 +61,28 @@ const [requires, func] = [
     router.post(
       '/login',
       wrap(async (req, res, next) => {
-        const { email, password } = req.body;
+        const { email, password, tfa } = req.body;
         const user = await UserService.checkCredentials(email, password);
-        const token = await jwt.encode({
-          id: user._id,
-          password: md5(user.password)
-        });
-        res.send({
-          token,
-          id: user._id,
-          email,
-          referralCode: user.referralCode,
-          tfaEnabled: user
-        });
+        let check = false;
+        if (user.tfaSecret) {
+          check = await UserService.checkTfa(user._id, tfa);
+        } else {
+          check = true;
+        }
+        if (check) {
+          const token = await jwt.encode({
+            id: user._id,
+            password: md5(user.password)
+          });
+          res.send({
+            token,
+            id: user._id,
+            email,
+            referralCode: user.referralCode,
+            tfaEnabled: !!user.tfaSecret
+          });
+        }
+        throw error(404, '2FA token is invalid');
       })
     );
 

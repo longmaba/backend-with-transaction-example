@@ -1,5 +1,5 @@
 const [requires, func] = [
-  'models.User, error, ::validate.js, ::generate-password, jwt, email.sendActivation, email.sendResetPassword, email.sendNewPassword, md5',
+  'models.User, error, ::validate.js, ::generate-password, jwt, email.sendActivation, email.sendResetPassword, email.sendNewPassword, md5, ::speakeasy',
   (
     User,
     error,
@@ -9,7 +9,8 @@ const [requires, func] = [
     sendActivationEmail,
     sendResetPasswordEmail,
     sendNewPasswordEmail,
-    md5
+    md5,
+    speakeasy
   ) => {
     const UserService = {};
 
@@ -35,6 +36,20 @@ const [requires, func] = [
       if (!user) {
         return 'is not valid!';
       }
+    };
+
+    UserService.checkTfa = async (id, tfa) => {
+      const user = await User.findById(id);
+      if (!user) {
+        throw error(404, 'User does not exist!');
+      }
+      tfa = tfa.replace(/ /g, '');
+      const validToken = speakeasy.totp.verify({
+        secret: user.tfaSecret,
+        encoding: 'base32',
+        token: tfa
+      });
+      return validToken;
     };
 
     UserService.createNew = async (email, password, username, referralCode) => {
@@ -107,7 +122,6 @@ const [requires, func] = [
 
     UserService.resetPassword = async email => {
       const user = await User.findOne({ email });
-      console.log(user);
       if (!user) {
         throw error(404, 'Email does not exist!');
       }
