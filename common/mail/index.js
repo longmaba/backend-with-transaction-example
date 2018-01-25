@@ -44,7 +44,7 @@ Good luck and have fun!</div>
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinfx.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="./CFX-key.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="./CFX-key.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>Welcome to CoinFX! You're only one step away from being successful! Please follow the link below to activate your account:</p>
@@ -54,9 +54,9 @@ Good luck and have fun!</div>
 <p>This email is sent automatically.</p>
 </div>
 <div style="padding: 15px 0; background-color: #333333; text-align: center;">
-<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">support@cfx.io</a></p>
+<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">admin@coinforex.io</a></p>
 <div style="color: #535353; font-size: 12px;">
-<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">www.coinfx.io</a></p>
+<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">coinforex.io</a></p>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
 </div>
@@ -93,9 +93,9 @@ Good luck and have fun!</div>
 <p>This email is sent automatically.</p>
 </div>
 <div style="padding: 15px 0; background-color: #333333; text-align: center;">
-<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">support@cfx.io</a></p>
+<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">admin@coinforex.io</a></p>
 <div style="color: #535353; font-size: 12px;">
-<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">www.coinfx.io</a></p>
+<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">coinforex.io</a></p>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
 </div>
@@ -121,7 +121,7 @@ Good luck and have fun!</div>
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinfx.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="./CFX-key.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="./CFX-key.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>You have successfully reset your password! Here is your new password: ${password}</p>
@@ -130,9 +130,9 @@ Good luck and have fun!</div>
 <p>This email is sent automatically.</p>
 </div>
 <div style="padding: 15px 0; background-color: #333333; text-align: center;">
-<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">support@cfx.io</a></p>
+<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">support@coinforex.io</a></p>
 <div style="color: #535353; font-size: 12px;">
-<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">www.coinfx.io</a></p>
+<p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">coinforex.io</a></p>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
 </div>
