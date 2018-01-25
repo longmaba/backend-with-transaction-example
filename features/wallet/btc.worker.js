@@ -5,7 +5,7 @@ const [requires, func] = [
 
     const handler = wrap(async (req, res, next) => {
       const { address, value, transaction_hash, confirmations } = req.query;
-      if (parseInt(confirmations) >= 3) {
+      if (parseInt(confirmations) == 3) {
         const amount = new BigNumber(value).times('1e-8').toString();
         await WalletService.depositBtcToAddress(
           address,
