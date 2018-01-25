@@ -177,17 +177,17 @@ const [requires, func] = [
     };
 
     WalletService.depositBtcToAddress = async (address, amount, txid) => {
-      const wallet = await btc.findAccountByBtcAddress(address);
+      const wallet = await WalletService.findAccountByBtcAddress(address);
       if (!wallet) {
         throw new Error('No account linked to this address');
       }
-      return await WalletService.depositBtc(wallet.account, amount, txid);
+      return await WalletService.depositBtc(wallet.userId, amount, txid);
     };
 
     WalletService.depositBtc = async (account, amount, txid) => {
       try {
         return await Transaction.create({
-          account,
+          userId: account,
           amount,
           date: new Date(),
           key: `btc:deposit:${txid}`,

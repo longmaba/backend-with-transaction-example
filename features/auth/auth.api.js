@@ -33,7 +33,13 @@ const [requires, func] = [
       '/activate/:token',
       wrap(async (req, res, next) => {
         const { token } = req.params;
-        const user = await jwt.decode(token);
+        let user;
+        try {
+          user = await jwt.decode(token);
+        } catch (e) {
+          res.redirect(`${config.webUrl}/tokenExpired`);
+          return;
+        }
         await UserService.activateAccount(user.id);
         res.redirect(`${config.webUrl}/activationSuccess`);
       })
@@ -52,7 +58,13 @@ const [requires, func] = [
       '/resetPassword/:token',
       wrap(async (req, res, next) => {
         const { token } = req.params;
-        const user = await jwt.decode(token);
+        let user;
+        try {
+          user = await jwt.decode(token);
+        } catch (e) {
+          res.redirect(`${config.webUrl}/tokenExpired`);
+          return;
+        }
         await UserService.generateNewPassword(user.id);
         res.redirect(`${config.webUrl}/resetPassword/success`);
       })
