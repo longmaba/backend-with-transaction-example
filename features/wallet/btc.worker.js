@@ -3,7 +3,6 @@ const [requires, func] = [
   (express, api, wrap, error, BigNumber, WalletService) => {
     const router = express.Router();
 
-    // GET /api/btc/receive?address=15GuseaZG45sGgE1oBeugDhLeWwZVmDVKH&transaction_hash=319c3b4cc2480af49117da007aec2eae381a78ff4663079f4f1c1a55eaf840d1&value=70000&confirmations=0
     const handler = wrap(async (req, res, next) => {
       const { address, value, transaction_hash, confirmations } = req.query;
       if (parseInt(confirmations) >= 3) {
@@ -17,7 +16,7 @@ const [requires, func] = [
       res.sendStatus(200);
     });
 
-    router.get('/', handler);
+    router.get('/receive', handler);
     router.post('/', handler);
 
     api.use('/btc', router);

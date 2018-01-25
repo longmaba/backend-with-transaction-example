@@ -75,14 +75,14 @@ Good luck and have fun!</div>
       require: ['email', 'config'],
       func: (email, config) => (to, activationCode) => {
         return email.sendMail({
-          text: `Click on this link to reset your password: ${config.apiUrl}/auth/resetPassword/${activationCode}`,
-          from: 'Dike <login@dike.bet>',
+          text: `Reset your password`,
+          from: 'CoinForex <login@coinforex.io>',
           to,
           subject: 'CFX - Reset Password',
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinfx.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://static.wixstatic.com/media/3a17d1_eec1082b1e26436987a0d1ecd4766880~mv2_d_2048_2048_s_2.png/v1/fill/w_160,h_160,al_c,usm_0.66_1.00_0.01/3a17d1_eec1082b1e26436987a0d1ecd4766880~mv2_d_2048_2048_s_2.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://static.wixstatic.com/media/3a17d1_eec1082b1e26436987a0d1ecd4766880~mv2_d_2048_2048_s_2.png/v1/fill/w_160,h_160,al_c,usm_0.66_1.00_0.01/3a17d1_eec1082b1e26436987a0d1ecd4766880~mv2_d_2048_2048_s_2.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>We've just received your request to reset password. Please follow the link below:</p>
@@ -114,8 +114,8 @@ Good luck and have fun!</div>
       require: ['email', 'config'],
       func: (email, config) => (to, password) => {
         return email.sendMail({
-          text: `Your new password is: ${password}. Please change it as soon as possible.`,
-          from: 'Dike <login@dike.bet>',
+          text: `Your new password`,
+          from: 'CoinForex <login@coinforex.io>',
           to,
           subject: 'CFX - New Password',
           html: `<div style="background-color: #eee;">
@@ -130,7 +130,7 @@ Good luck and have fun!</div>
 <p>This email is sent automatically.</p>
 </div>
 <div style="padding: 15px 0; background-color: #333333; text-align: center;">
-<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">support@coinforex.io</a></p>
+<p style="color: #878787; font-size: 12px; margin: 7px 0 10px;">Information center: <a style="color: #878787;">admin@coinforex.io</a></p>
 <div style="color: #535353; font-size: 12px;">
 <p style="margin: 0;">Copyright &copy;2017-2018 <a style="color: #535353;">coinforex.io</a></p>
 <div>&nbsp;</div>
