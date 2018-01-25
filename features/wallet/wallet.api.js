@@ -19,8 +19,10 @@ const [requires, func] = [
       '/info',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        const wallet = await WalletService.touchWallet(req.user._id);
-        res.send(wallet.address);
+        const { address, btcAddress } = await WalletService.touchWallet(
+          req.user._id
+        );
+        res.send({ address, btcAddress });
       })
     );
 
