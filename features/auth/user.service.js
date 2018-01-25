@@ -163,7 +163,7 @@ const [requires, func] = [
       const user = await User.findOne({ email, password });
       if (!user) {
         throw error(401, 'Invalid email or password!');
-      } else if (user.isActivated) {
+      } else if (!user.isActivated) {
         throw error(403, 'Account is not activated!');
       }
       return user;
