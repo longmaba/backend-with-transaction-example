@@ -1,0 +1,6 @@
+{
+  "api": {
+    "service": "bitbucket",
+    "prehook": "npm install"
+  }
+}
