@@ -6,7 +6,8 @@ module.exports = {
     'models.Wallet': 'wallet.model << mongoose',
     'services.Wallet': require('./wallet.service'),
     'api.wallet': require('./wallet.api'),
-    'workers.ETH': require('./eth.worker')
+    'workers.ETH': require('./eth.worker'),
+    'services.Btc': require('./btc.service')
   },
   exports: ['models.Transaction', 'models.Wallet', 'services.Wallet']
 };

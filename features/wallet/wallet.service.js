@@ -1,6 +1,6 @@
 const [requires, func] = [
   `models.Wallet, models.Transaction, models.User, ::crypto, ::ethereumjs-util, web3, ::ethereumjs-tx,
-  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config`,
+  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config, services.Btc`,
   (
     Wallet,
     Transaction,
@@ -15,7 +15,8 @@ const [requires, func] = [
     mongoose,
     request,
     validate,
-    config
+    config,
+    BtcService
   ) => {
     WalletService = {};
 
@@ -55,10 +56,12 @@ const [requires, func] = [
     WalletService.createWallet = async id => {
       const randbytes = crypto.randomBytes(32);
       const address = ethUtils.privateToAddress(randbytes);
+      const btcAddress = await BtcService.generate({ secret: config.bitcoin.secret });
       return await Wallet.create({
         userId: id,
         address: `0x${address.toString('hex')}`,
-        privateKey: randbytes
+        privateKey: randbytes,
+        btcAddress: btcAddress.address
       });
     };
 

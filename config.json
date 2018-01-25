@@ -11,7 +11,7 @@
     }
   },
   "webUrl": "http://localhost:3000",
-  "apiUrl": "http://localhost:8080/api",
+  "apiUrl": "https://api.coinforex.io/api",
   "randomOrg": {
     "apiKey": "44bb4a9a-1e03-4ef5-963a-ab7ce4492923"
   },
@@ -43,10 +43,9 @@
   },
   "redisUrl": "redis://localhost",
   "bitcoin": {
-    "host": "localhost",
-    "port": "18332",
-    "username": "foo",
-    "password": "bar" 
+    "xpub": "xpub6DHrkrHx6TBNd9LjmnYvsbUcsGQASxmyYpiRe9Xs2nViZftUKFheAWvFMqnuQbHBnGGWMYUpxniQWarnWun9vGhrnggKs1pXZfmkMP2Cdsf",
+    "key": "12f16c05-7e5e-44bb-a789-f2bab1216f72",
+    "secret": "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"
   },
   "parityUrl": "http://localhost:8545",
   "ethMainAddress": {
