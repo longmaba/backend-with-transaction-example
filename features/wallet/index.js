@@ -7,6 +7,7 @@ module.exports = {
     'services.Wallet': require('./wallet.service'),
     'api.wallet': require('./wallet.api'),
     'workers.ETH': require('./eth.worker'),
+    'workers.BTC': require('./btc.worker'),
     'services.Btc': require('./btc.service')
   },
   exports: ['models.Transaction', 'models.Wallet', 'services.Wallet']

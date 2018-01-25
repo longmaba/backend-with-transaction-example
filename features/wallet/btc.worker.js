@@ -7,6 +7,7 @@ const [requires, func] = [
       const { address, value, transaction_hash, confirmations } = req.query;
       if (parseInt(confirmations) == 3) {
         const amount = new BigNumber(value).times('1e-8').toString();
+        // TODO: check tx, check duplicate
         await WalletService.depositBtcToAddress(
           address,
           amount,
