@@ -30,7 +30,7 @@ module.exports = {
         app.use(middlewares);
 
         app.get('/', (req, res) => {
-          res.send("It's working!");
+          res.send("API is up and running.");
         });
 
         app.use('/api', api);
