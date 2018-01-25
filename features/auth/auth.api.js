@@ -69,20 +69,20 @@ const [requires, func] = [
         } else {
           check = true;
         }
-        if (check) {
-          const token = await jwt.encode({
-            id: user._id,
-            password: md5(user.password)
-          });
-          res.send({
-            token,
-            id: user._id,
-            email,
-            referralCode: user.referralCode,
-            tfaEnabled: !!user.tfaSecret
-          });
+        if (!check) {
+          throw error(404, '2FA token is invalid');
         }
-        throw error(404, '2FA token is invalid');
+        const token = await jwt.encode({
+          id: user._id,
+          password: md5(user.password)
+        });
+        res.send({
+          token,
+          id: user._id,
+          email,
+          referralCode: user.referralCode,
+          tfaEnabled: !!user.tfaSecret
+        });
       })
     );
 
