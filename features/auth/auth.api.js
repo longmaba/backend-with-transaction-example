@@ -63,14 +63,9 @@ const [requires, func] = [
       wrap(async (req, res, next) => {
         const { email, password, tfa } = req.body;
         const user = await UserService.checkCredentials(email, password);
-        let check = false;
         if (user.tfaSecret) {
-          check = await UserService.checkTfa(user._id, tfa);
-        } else {
-          check = true;
-        }
-        if (!check) {
-          throw error(404, '2FA token is invalid');
+          const tfaValid = await UserService.checkTfa(user._id, tfa);
+          if (!tfaValid) throw error(400, '2FA token is invalid');
         }
         const token = await jwt.encode({
           id: user._id,
