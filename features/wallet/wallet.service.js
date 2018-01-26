@@ -230,6 +230,7 @@ const [requires, func] = [
         cryptoAmount = web3.toWei(total, 'ether').neg().toString();
         price_usd = await getCryptoPriceInUsd('ethereum');
       } else if (currency === 'btc') {
+        cryptoAmount = new BigNumber(total).neg().toString();
         price_usd = await getCryptoPriceInUsd('bitcoin');
       }
 
@@ -259,7 +260,7 @@ const [requires, func] = [
         userId: senderId,
         amount: cryptoAmount,
         date: new Date(),
-        key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:${config.cfxPrice}`,
+        key: `${currency}:buy:${txid}:${Date.now()}:${price_usd}:${config.cfxPrice}`,
         data: {
           type: 'buyCFX',
           from: senderAddress,

@@ -79,7 +79,7 @@ const [requires, func] = [
       '/check/eth/:tx',
       wrap(async (req, res, next) => {
         await queue
-          .create('ethRetry', {
+          .create('cfx:ethRetry', {
             tx: req.params.tx
           })
           .save();

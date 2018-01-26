@@ -100,7 +100,7 @@ const [requires, func] = [
     };
 
     UserService.resendActivationEmail = async email => {
-      const user = User.findOne({ email });
+      const user = await User.findOne({ email });
       if (!user) {
         throw error(404, 'User not found!');
       }
@@ -111,6 +111,7 @@ const [requires, func] = [
 
     UserService.activateAccount = async id => {
       const user = await User.findOne({ _id: id });
+      console.log(user);
       if (!user) {
         throw error(404, 'User does not exist!');
       }

@@ -10,7 +10,7 @@
       "pass": "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"
     }
   },
-  "webUrl": "http://localhost:3000",
+  "webUrl": "https://dashboard.coinforex.io",
   "apiUrl": "https://api.coinforex.io/api",
   "randomOrg": {
     "apiKey": "44bb4a9a-1e03-4ef5-963a-ab7ce4492923"
