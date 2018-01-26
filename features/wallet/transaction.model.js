@@ -4,10 +4,13 @@ module.exports = mongoose => {
     {
       userId: mongoose.Schema.ObjectId,
       currency: String,
-      key: String,
+      date: { type: Date, index: true },
+      key: {
+        type: String,
+        unique: true
+      },
       amount: String,
-      data: mongoose.Schema.Types.Mixed,
-      date: Date
+      data: mongoose.Schema.Types.Mixed
     },
     'transaction'
   );

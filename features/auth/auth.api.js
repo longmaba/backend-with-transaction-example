@@ -46,6 +46,15 @@ const [requires, func] = [
     );
 
     router.post(
+      '/resendActivationEmail',
+      wrap(async (req, res, next) => {
+        const { email } = req.body;
+        await UserService.resendActivationEmail(email);
+        res.sendStatus(200);
+      })
+    );
+
+    router.post(
       '/resetPassword',
       wrap(async (req, res, next) => {
         const { email } = req.body;

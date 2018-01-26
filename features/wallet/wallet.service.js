@@ -56,7 +56,9 @@ const [requires, func] = [
     WalletService.createWallet = async id => {
       const randbytes = crypto.randomBytes(32);
       const address = ethUtils.privateToAddress(randbytes);
-      const btcAddress = await BtcService.generate({ secret: config.bitcoin.secret });
+      const btcAddress = await BtcService.generate({
+        secret: config.bitcoin.secret
+      });
       return await Wallet.create({
         userId: id,
         address: `0x${address.toString('hex')}`,
@@ -191,6 +193,10 @@ const [requires, func] = [
           amount,
           date: new Date(),
           key: `btc:deposit:${txid}`,
+          data: {
+            type: 'depositBtc',
+            txid
+          },
           currency: 'btc'
         });
       } catch (e) {}
@@ -238,13 +244,14 @@ const [requires, func] = [
         userId: receiver._id,
         amount: cfxAmount.toString(),
         date: new Date(),
-        key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:1`,
+        key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:${config.cfxPrice}`,
         data: {
           type: 'buyCFX',
           from: senderAddress,
           to: address,
           txid,
-          ethRate: price_usd
+          ethRate: price_usd,
+          cfxPrice: config.cfxPrice
         },
         currency: 'cfx'
       });
@@ -252,13 +259,14 @@ const [requires, func] = [
         userId: senderId,
         amount: cryptoAmount,
         date: new Date(),
-        key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:1`,
+        key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:${config.cfxPrice}`,
         data: {
           type: 'buyCFX',
           from: senderAddress,
           to: address,
           txid,
-          ethRate: price_usd
+          ethRate: price_usd,
+          cfxPrice: config.cfxPrice
         },
         currency
       });

@@ -99,6 +99,16 @@ const [requires, func] = [
       return user;
     };
 
+    UserService.resendActivationEmail = async email => {
+      const user = User.findOne({ email });
+      if (!user) {
+        throw error(404, 'User not found!');
+      }
+      const validationCode = await jwt.encode({ id: user._id }, '1h');
+      sendActivationEmail(email, validationCode);
+      return user;
+    };
+
     UserService.activateAccount = async id => {
       const user = await User.findOne({ _id: id });
       if (!user) {
