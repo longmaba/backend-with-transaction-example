@@ -9,7 +9,7 @@ const [requires, func] = [
         if (err) {
           return;
         }
-        queue.create('ethTxs', { transactions: block.transactions }).save();
+        queue.create('cfx:ethTxs', { transactions: block.transactions }).save();
       });
     });
 
@@ -38,7 +38,7 @@ const [requires, func] = [
       }
       console.log(confirmations);
       if (confirmations < 6) {
-        queue.create('eth', { tx }).delay(config.worker.retryDelay).save();
+        queue.create('cfx:eth', { tx }).delay(config.worker.retryDelay).save();
       } else {
         await WalletService.transferToMain(transaction.to, transaction.value);
         await WalletService.depositToAddress(
@@ -60,7 +60,7 @@ const [requires, func] = [
               account = await WalletService.getUserIdByAddress(address);
             } catch (e) {}
             if (account) {
-              queue.create('eth', { tx }).save();
+              queue.create('cfx:eth', { tx }).save();
             }
           })
         )
@@ -68,7 +68,7 @@ const [requires, func] = [
       return true;
     };
 
-    queue.process('ethRetry', async (job, done) => {
+    queue.process('cfx:ethRetry', async (job, done) => {
       try {
         const tx = job.data.tx;
         await processTransaction(tx);
@@ -79,7 +79,7 @@ const [requires, func] = [
       }
     });
 
-    queue.process('eth', async (job, done) => {
+    queue.process('cfx:eth', async (job, done) => {
       try {
         const tx = job.data.tx;
         await processTransaction(tx);
@@ -90,7 +90,7 @@ const [requires, func] = [
       }
     });
 
-    queue.process('ethTxs', async (job, done) => {
+    queue.process('cfx:ethTxs', async (job, done) => {
       try {
         const transactions = job.data.transactions;
         await processTransactions(transactions);
