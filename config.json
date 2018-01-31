@@ -31,7 +31,7 @@
     "api_key": "732473685971157",
     "api_secret": "IHexxVg4tg5afrTdpkTdNauC5y0"
   },
-  "appName": "com.tingme.app",
+  "appName": "cfx",
   "pushNotification": {
     "apn": {
       "token": {
