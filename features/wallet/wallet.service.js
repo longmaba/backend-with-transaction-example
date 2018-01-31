@@ -56,9 +56,7 @@ const [requires, func] = [
     WalletService.createWallet = async id => {
       const randbytes = crypto.randomBytes(32);
       const address = ethUtils.privateToAddress(randbytes);
-      const btcAddress = await BtcService.generate({
-        secret: config.bitcoin.secret
-      });
+      const btcAddress = await BtcService.generate();
       return await Wallet.create({
         userId: id,
         address: `0x${address.toString('hex')}`,

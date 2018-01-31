@@ -58,6 +58,9 @@ const [requires, func] = [
         transactions.map(
           throat(50, async tx => {
             const transaction = await getTransaction(tx);
+            if (!transaction) {
+              return;
+            }
             const address = transaction.to;
             let account;
             try {
@@ -91,23 +94,23 @@ const [requires, func] = [
         let latestProcessedBlock = await ValueService.get(LATEST_PROCESSED_BLOCK);
         console.log('Current Block Number:', blockNumber);
         if (!latestProcessedBlock) {
-          console.log('Processing new block number:', blockNumber);
           await ValueService.set(LATEST_PROCESSED_BLOCK, blockNumber);
           const block = await getBlock(blockNumber);
           if (!block) {
             return;
           }
+          console.log(`Processing new block number: ${blockNumber} - ${block.transactions.length} transactions`);
           queue.create(`${appName}:ethTxs`, { transactions: block.transactions }).save();
         } else {
           while (latestProcessedBlock < blockNumber) {
             lock.extend(ttl);
             latestProcessedBlock++;
-            console.log('Processing block number:', latestProcessedBlock);
             await ValueService.set(LATEST_PROCESSED_BLOCK, latestProcessedBlock);
             const block = await getBlock(latestProcessedBlock);
             if (!block) {
-              return;
+              continue;
             }
+            console.log(`Processing new block number: ${latestProcessedBlock} - ${block.transactions.length} transactions`);
             queue.create(`${appName}:ethTxs`, { transactions: block.transactions }).save();
           }
         }
@@ -152,7 +155,7 @@ const [requires, func] = [
 
     const initCron = () => {
       new CronJob(
-        '*/30 * * * * *',
+        '*/10 * * * * *',
         async () => {
           await processBlock();
         },
