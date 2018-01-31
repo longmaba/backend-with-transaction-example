@@ -45,7 +45,10 @@
   "bitcoin": {
     "xpub": "xpub6DHrkrHx6TBNd9LjmnYvsbUcsGQASxmyYpiRe9Xs2nViZftUKFheAWvFMqnuQbHBnGGWMYUpxniQWarnWun9vGhrnggKs1pXZfmkMP2Cdsf",
     "key": "12f16c05-7e5e-44bb-a789-f2bab1216f72",
-    "secret": "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"
+    "secret": "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",
+    "apiHost": "http://localhost:3000",
+    "identifier": "cae2455f-715e-437b-be12-f33bdfee817b",
+    "password": "Thu6ngay13"
   },
   "parityUrl": "https://mainnet.infura.io/MrIqvbJpKxxftiQvGwrC",
   "ethMainAddress": {

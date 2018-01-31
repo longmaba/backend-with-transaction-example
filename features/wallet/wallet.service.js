@@ -1,6 +1,6 @@
 const [requires, func] = [
   `models.Wallet, models.Transaction, models.User, ::crypto, ::ethereumjs-util, web3, ::ethereumjs-tx,
-  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config, services.Btc`,
+  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config, services.Btc, ::blockchain.info/MyWallet, lock`,
   (
     Wallet,
     Transaction,
@@ -16,9 +16,19 @@ const [requires, func] = [
     request,
     validate,
     config,
-    BtcService
+    BtcService,
+    MyWallet,
+    Lock
   ) => {
     WalletService = {};
+
+    const appName = process.env.appName || config.appName;
+
+    const btcWallet = new MyWallet(
+      config.bitcoin.identifier,
+      config.bitcoin.password,
+      { apiCode: config.bitcoin.key, apiHost: config.bitcoin.apiHost }
+    );
 
     validate.validators.validAddress = async address => {
       if (!address) {
@@ -45,6 +55,23 @@ const [requires, func] = [
       }
     };
 
+    const generateBitcoinAddress = async () => {
+      const ttl = 10000;
+      const lock = await Lock.lock(`${appName}/btc/GENERATE_ADDRESS`, ttl);
+      let btcAddress;
+      const gap = await request(
+        `https://api.blockchain.info/v2/receive/checkgap?xpub=${config.bitcoin.xpub}&key=${config.bitcoin.key}`
+      );
+      if (gap === 10) {
+        lock.extend(ttl);
+        const gapAddress = await BtcService.generate().address;
+        btcWallet.send(gapAddress, 1000);
+      }
+      btcAddress = await BtcService.generate().address;
+      await lock.unlock();
+      return btcAddress;
+    };
+
     WalletService.touchWallet = async id => {
       let wallet = await Wallet.findOne({ userId: id });
       if (wallet) {
@@ -56,12 +83,12 @@ const [requires, func] = [
     WalletService.createWallet = async id => {
       const randbytes = crypto.randomBytes(32);
       const address = ethUtils.privateToAddress(randbytes);
-      const btcAddress = await BtcService.generate();
+      const btcAddress = await generateBitcoinAddress();
       return await Wallet.create({
         userId: id,
         address: `0x${address.toString('hex')}`,
         privateKey: randbytes,
-        btcAddress: btcAddress.address
+        btcAddress: btcAddress
       });
     };
 
