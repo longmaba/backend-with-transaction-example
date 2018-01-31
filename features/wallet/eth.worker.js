@@ -2,7 +2,18 @@ const LATEST_PROCESSED_BLOCK = 'cfx/eth/LATEST_PROCESSED_BLOCK';
 
 const [requires, func] = [
   'services.Wallet, services.Value, models.Transaction, queue, web3, config, lock, ::bignumber.js, ::throat, ::cron',
-  (WalletService, ValueService, Transaction, queue, web3, config, Lock, BigNumber, throat, { CronJob }) => {
+  (
+    WalletService,
+    ValueService,
+    Transaction,
+    queue,
+    web3,
+    config,
+    Lock,
+    BigNumber,
+    throat,
+    { CronJob }
+  ) => {
     // web3.eth.filter('latest').watch((err, result) => {
     //   if (err) {
     //     return;
@@ -36,13 +47,16 @@ const [requires, func] = [
       let account;
       try {
         account = await WalletService.getUserIdByAddress(address);
-      } catch (e) { }
+      } catch (e) {}
       if (!account) {
         return;
       }
       console.log(confirmations);
       if (confirmations < 6) {
-        queue.create(`${appName}:eth`, { tx }).delay(config.worker.retryDelay).save();
+        queue
+          .create(`${appName}:eth`, { tx })
+          .delay(config.worker.retryDelay)
+          .save();
       } else {
         await WalletService.transferToMain(transaction.to, transaction.value);
         await WalletService.depositToAddress(
@@ -65,7 +79,7 @@ const [requires, func] = [
             let account;
             try {
               account = await WalletService.getUserIdByAddress(address);
-            } catch (e) { }
+            } catch (e) {}
             if (account) {
               queue.create(`${appName}:eth`, { tx }).save();
             }
@@ -91,7 +105,9 @@ const [requires, func] = [
         const ttl = 10000;
         const lock = await Lock.lock(`${appName}/eth/CHECK_BLOCK`, ttl);
         const blockNumber = web3.eth.blockNumber;
-        let latestProcessedBlock = await ValueService.get(LATEST_PROCESSED_BLOCK);
+        let latestProcessedBlock = await ValueService.get(
+          LATEST_PROCESSED_BLOCK
+        );
         console.log('Current Block Number:', blockNumber);
         if (!latestProcessedBlock) {
           await ValueService.set(LATEST_PROCESSED_BLOCK, blockNumber);
@@ -99,19 +115,32 @@ const [requires, func] = [
           if (!block) {
             return;
           }
-          console.log(`Processing new block number: ${blockNumber} - ${block.transactions.length} transactions`);
-          queue.create(`${appName}:ethTxs`, { transactions: block.transactions }).save();
+          console.log(
+            `Processing new block number: ${blockNumber} - ${block.transactions.length} transactions`
+          );
+          queue
+            .create(`${appName}:ethTxs`, { transactions: block.transactions })
+            .save();
         } else {
           while (latestProcessedBlock < blockNumber) {
             lock.extend(ttl);
             latestProcessedBlock++;
-            await ValueService.set(LATEST_PROCESSED_BLOCK, latestProcessedBlock);
+            await ValueService.set(
+              LATEST_PROCESSED_BLOCK,
+              latestProcessedBlock
+            );
             const block = await getBlock(latestProcessedBlock);
             if (!block) {
+              // TODO: put failed block to queue and retry in the future
+              console.log(`Failed to get block ${latestProcessedBlock}`);
               continue;
             }
-            console.log(`Processing new block number: ${latestProcessedBlock} - ${block.transactions.length} transactions`);
-            queue.create(`${appName}:ethTxs`, { transactions: block.transactions }).save();
+            console.log(
+              `Processing new block number: ${latestProcessedBlock} - ${block.transactions.length} transactions`
+            );
+            queue
+              .create(`${appName}:ethTxs`, { transactions: block.transactions })
+              .save();
           }
         }
         await lock.unlock();
