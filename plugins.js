@@ -17,6 +17,7 @@ module.exports = [
   './features/auth',
   './features/wallet',
   './features/price',
+  './features/values',
 
   // middlewares
   './middlewares/',
