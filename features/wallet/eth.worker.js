@@ -1,17 +1,21 @@
+const LATEST_PROCESSED_BLOCK = 'cfx/eth/LATEST_PROCESSED_BLOCK';
+
 const [requires, func] = [
-  'services.Wallet, models.Transaction, queue, web3, config, ::bignumber.js, ::throat',
-  (WalletService, Transaction, queue, web3, config, BigNumber, throat) => {
-    web3.eth.filter('latest').watch((err, result) => {
-      if (err) {
-        return;
-      }
-      web3.eth.getBlock(result, (err, block) => {
-        if (err) {
-          return;
-        }
-        queue.create('cfx:ethTxs', { transactions: block.transactions }).save();
-      });
-    });
+  'services.Wallet, services.Value, models.Transaction, queue, web3, config, lock, ::bignumber.js, ::throat, ::cron',
+  (WalletService, ValueService, Transaction, queue, web3, config, Lock, BigNumber, throat, { CronJob }) => {
+    // web3.eth.filter('latest').watch((err, result) => {
+    //   if (err) {
+    //     return;
+    //   }
+    //   web3.eth.getBlock(result, (err, block) => {
+    //     if (err) {
+    //       return;
+    //     }
+    //     queue.create('cfx:ethTxs', { transactions: block.transactions }).save();
+    //   });
+    // });
+
+    const appName = process.env.appName || config.appName;
 
     const getTransaction = tx =>
       new Promise((resolve, reject) => {
@@ -32,13 +36,13 @@ const [requires, func] = [
       let account;
       try {
         account = await WalletService.getUserIdByAddress(address);
-      } catch (e) {}
+      } catch (e) { }
       if (!account) {
         return;
       }
       console.log(confirmations);
       if (confirmations < 6) {
-        queue.create('cfx:eth', { tx }).delay(config.worker.retryDelay).save();
+        queue.create(`${appName}:eth`, { tx }).delay(config.worker.retryDelay).save();
       } else {
         await WalletService.transferToMain(transaction.to, transaction.value);
         await WalletService.depositToAddress(
@@ -58,9 +62,9 @@ const [requires, func] = [
             let account;
             try {
               account = await WalletService.getUserIdByAddress(address);
-            } catch (e) {}
+            } catch (e) { }
             if (account) {
-              queue.create('cfx:eth', { tx }).save();
+              queue.create(`${appName}:eth`, { tx }).save();
             }
           })
         )
@@ -68,7 +72,52 @@ const [requires, func] = [
       return true;
     };
 
-    queue.process('cfx:ethRetry', async (job, done) => {
+    const getBlock = blockNumber =>
+      new Promise((resolve, reject) => {
+        web3.eth.getBlock(blockNumber, (err, block) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(block);
+          }
+        });
+      });
+
+    const processBlock = async () => {
+      try {
+        const ttl = 10000;
+        const lock = await Lock.lock(`${appName}/eth/CHECK_BLOCK`, ttl);
+        const blockNumber = web3.eth.blockNumber;
+        let latestProcessedBlock = await ValueService.get(LATEST_PROCESSED_BLOCK);
+        console.log('Current Block Number:', blockNumber);
+        if (!latestProcessedBlock) {
+          console.log('Processing new block number:', blockNumber);
+          await ValueService.set(LATEST_PROCESSED_BLOCK, blockNumber);
+          const block = await getBlock(blockNumber);
+          if (!block) {
+            return;
+          }
+          queue.create(`${appName}:ethTxs`, { transactions: block.transactions }).save();
+        } else {
+          while (latestProcessedBlock < blockNumber) {
+            lock.extend(ttl);
+            latestProcessedBlock++;
+            console.log('Processing block number:', latestProcessedBlock);
+            await ValueService.set(LATEST_PROCESSED_BLOCK, latestProcessedBlock);
+            const block = await getBlock(latestProcessedBlock);
+            if (!block) {
+              return;
+            }
+            queue.create(`${appName}:ethTxs`, { transactions: block.transactions }).save();
+          }
+        }
+        await lock.unlock();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    queue.process(`${appName}:ethRetry`, async (job, done) => {
       try {
         const tx = job.data.tx;
         await processTransaction(tx);
@@ -79,7 +128,7 @@ const [requires, func] = [
       }
     });
 
-    queue.process('cfx:eth', async (job, done) => {
+    queue.process(`${appName}:eth`, async (job, done) => {
       try {
         const tx = job.data.tx;
         await processTransaction(tx);
@@ -90,7 +139,7 @@ const [requires, func] = [
       }
     });
 
-    queue.process('cfx:ethTxs', async (job, done) => {
+    queue.process(`${appName}:ethTxs`, async (job, done) => {
       try {
         const transactions = job.data.transactions;
         await processTransactions(transactions);
@@ -100,6 +149,19 @@ const [requires, func] = [
         done(e);
       }
     });
+
+    const initCron = () => {
+      new CronJob(
+        '*/30 * * * * *',
+        async () => {
+          await processBlock();
+        },
+        null,
+        true
+      );
+    };
+
+    initCron();
 
     // queue.process('ethWithdraw', async (job, done) => {
     //   try {
