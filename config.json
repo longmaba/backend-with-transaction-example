@@ -57,5 +57,5 @@
   "worker": {
     "retryDelay": 5000
   },
-  "cfxPrice": "1"
+  "cfxPrice": "0.0001"
 }

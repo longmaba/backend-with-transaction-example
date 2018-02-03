@@ -62,6 +62,7 @@ const [requires, func] = [
       const gap = await request(
         `https://api.blockchain.info/v2/receive/checkgap?xpub=${config.bitcoin.xpub}&key=${config.bitcoin.key}`
       );
+      console.log(gap);
       if (gap === 10) {
         lock.extend(ttl);
         const gapAddress = await BtcService.generate().address;
@@ -83,12 +84,12 @@ const [requires, func] = [
     WalletService.createWallet = async id => {
       const randbytes = crypto.randomBytes(32);
       const address = ethUtils.privateToAddress(randbytes);
-      const btcAddress = await generateBitcoinAddress();
+      // const btcAddress = await generateBitcoinAddress();
       return await Wallet.create({
         userId: id,
         address: `0x${address.toString('hex')}`,
-        privateKey: randbytes,
-        btcAddress: btcAddress
+        privateKey: randbytes
+        // btcAddress: btcAddress
       });
     };
 
@@ -115,7 +116,7 @@ const [requires, func] = [
             break;
         }
       }
-      return { ethBalance, cfxBalance, btcBalance };
+      return { ethBalance, cfxBalance };
     };
 
     WalletService.getUserIdByAddress = async address => {
@@ -245,30 +246,30 @@ const [requires, func] = [
         .address;
       let receiver = user;
       let cryptoAmount;
-      let price_usd;
       if (address) {
         receiver = await WalletService.getUserByAddress(address);
       } else {
         address = senderAddress;
       }
-      if (currency === 'eth') {
-        cryptoAmount = web3.toWei(total, 'ether').neg().toString();
-        price_usd = await getCryptoPriceInUsd('ethereum');
-      } else if (currency === 'btc') {
-        cryptoAmount = new BigNumber(total).neg().toString();
-        price_usd = await getCryptoPriceInUsd('bitcoin');
-      }
+      let price_usd = await getCryptoPriceInUsd('ethereum');
+      cryptoAmount = web3.toWei(total, 'ether').neg().toString();
 
-      const cfxAmount = new BigNumber(total)
-        .times(price_usd)
-        .div(config.cfxPrice)
-        .toFixed(8);
+      let cfxAmount = new BigNumber(total).div(config.cfxPrice);
+
+      let totalInUsd = total.times(price_usd);
+      if (totalInUsd.gte(2000)) {
+        cfxAmount = cfxAmount.times(1.03);
+      } else if (totalInUsd.gte(5000)) {
+        cfxAmount = cfxAmount.times(1.05);
+      } else if (totalInUsd.gte(10000)) {
+        cfxAmount = cfxAmount.times(1.07);
+      }
 
       const task = Fawn.Task();
       const txid = mongoose.Types.ObjectId();
       task.save(Transaction, {
         userId: receiver._id,
-        amount: cfxAmount.toString(),
+        amount: cfxAmount.toFixed(8),
         date: new Date(),
         key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:${config.cfxPrice}`,
         data: {
@@ -313,6 +314,81 @@ const [requires, func] = [
       }
       return await task.run({ useMongoose: true });
     };
+
+    // WalletService.buyCFX = async (user, total, address, currency) => {
+    //   const senderId = user._id;
+    //   const senderAddress = (await Wallet.findOne({ userId: senderId }))
+    //     .address;
+    //   let receiver = user;
+    //   let cryptoAmount;
+    //   let price_usd;
+    //   if (address) {
+    //     receiver = await WalletService.getUserByAddress(address);
+    //   } else {
+    //     address = senderAddress;
+    //   }
+    //   if (currency === 'eth') {
+    //     cryptoAmount = web3.toWei(total, 'ether').neg().toString();
+    //     price_usd = await getCryptoPriceInUsd('ethereum');
+    //   } else if (currency === 'btc') {
+    //     cryptoAmount = new BigNumber(total).neg().toString();
+    //     price_usd = await getCryptoPriceInUsd('bitcoin');
+    //   }
+
+    //   const cfxAmount = new BigNumber(total)
+    //     .times(price_usd)
+    //     .div(config.cfxPrice)
+    //     .toFixed(8);
+
+    //   const task = Fawn.Task();
+    //   const txid = mongoose.Types.ObjectId();
+    //   task.save(Transaction, {
+    //     userId: receiver._id,
+    //     amount: cfxAmount.toString(),
+    //     date: new Date(),
+    //     key: `cfx:buy:${txid}:${Date.now()}:${price_usd}:${config.cfxPrice}`,
+    //     data: {
+    //       type: 'buyCFX',
+    //       from: senderAddress,
+    //       to: address,
+    //       txid,
+    //       ethRate: price_usd,
+    //       cfxPrice: config.cfxPrice
+    //     },
+    //     currency: 'cfx'
+    //   });
+    //   task.save(Transaction, {
+    //     userId: senderId,
+    //     amount: cryptoAmount,
+    //     date: new Date(),
+    //     key: `${currency}:buy:${txid}:${Date.now()}:${price_usd}:${config.cfxPrice}`,
+    //     data: {
+    //       type: 'buyCFX',
+    //       from: senderAddress,
+    //       to: address,
+    //       txid,
+    //       ethRate: price_usd,
+    //       cfxPrice: config.cfxPrice
+    //     },
+    //     currency
+    //   });
+    //   if (receiver.parentId) {
+    //     task.save(Transaction, {
+    //       userId: receiver.parentId,
+    //       amount: new BigNumber(cfxAmount).times(0.07).toString(),
+    //       date: new Date(),
+    //       key: `cfx:referralBonus:${txid}:${Date.now()}:${address}`,
+    //       data: {
+    //         type: 'referralBonus',
+    //         from: address,
+    //         buyAmount: cfxAmount,
+    //         txid
+    //       },
+    //       currency: 'cfx'
+    //     });
+    //   }
+    //   return await task.run({ useMongoose: true });
+    // };
 
     WalletService.buyCfxWithEthereum = async (user, total, address) => {
       total = new BigNumber(total);

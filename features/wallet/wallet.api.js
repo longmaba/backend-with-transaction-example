@@ -19,10 +19,8 @@ const [requires, func] = [
       '/info',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        const { address, btcAddress } = await WalletService.touchWallet(
-          req.user._id
-        );
-        res.send({ address, btcAddress });
+        const { address } = await WalletService.touchWallet(req.user._id);
+        res.send({ address });
       })
     );
 
@@ -31,29 +29,15 @@ const [requires, func] = [
       checkLoggedIn(),
       checkTfa(),
       wrap(async (req, res, next) => {
-        let { total, address, currency } = req.body;
+        let { total, address } = req.body;
         const { ethToUsd, btcToUsd } = await PriceService.getCurrentPrices();
-        total = new BigNumber(total);
-        let totalInUsd;
-        currency = currency.toLowerCase();
-        if (currency === 'eth') {
-          totalInUsd = total.times(ethToUsd);
-        } else if (currency === 'btc') {
-          totalInUsd = total.times(btcToUsd);
-        }
-        if (totalInUsd.gte(2000)) {
-          total = total.times(1.03);
-        } else if (totalInUsd.gte(5000)) {
-          total = total.times(1.05);
-        } else if (totalInUsd.gte(10000)) {
-          total = total.times(1.07);
-        }
         total = total.toFixed(8);
-        if (currency === 'eth') {
-          await WalletService.buyCfxWithEthereum(req.user, total, address);
-        } else if (currency === 'btc') {
-          await WalletService.buyCfxWithBitcoin(req.user, total, address);
-        }
+        total = new BigNumber(total);
+        // if (currency === 'eth') {
+        await WalletService.buyCfxWithEthereum(req.user, total, address);
+        // } else if (currency === 'btc') {
+        // await WalletService.buyCfxWithBitcoin(req.user, total, address);
+        // }
         res.sendStatus(200);
       })
     );
@@ -64,13 +48,13 @@ const [requires, func] = [
       wrap(async (req, res, next) => {
         const {
           cfxBalance,
-          ethBalance,
-          btcBalance
+          ethBalance
+          // btcBalance
         } = await WalletService.balance(req.user._id);
         res.send({
           cfxBalance: cfxBalance.toFixed(8),
-          ethBalance: web3.fromWei(ethBalance, 'ether').toFixed(8),
-          btcBalance: btcBalance.toFixed(8)
+          ethBalance: web3.fromWei(ethBalance, 'ether').toFixed(8)
+          // btcBalance: btcBalance.toFixed(8)
         });
       })
     );

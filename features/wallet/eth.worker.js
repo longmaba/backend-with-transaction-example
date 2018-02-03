@@ -45,6 +45,7 @@ const [requires, func] = [
       const confirmations = blockNumber - transaction.blockNumber;
       const address = transaction.to;
       let account;
+      console.log(address);
       try {
         account = await WalletService.getUserIdByAddress(address);
       } catch (e) {}
@@ -71,6 +72,7 @@ const [requires, func] = [
       await Promise.all(
         transactions.map(
           throat(50, async tx => {
+            console.log(tx);
             const transaction = await getTransaction(tx);
             if (!transaction) {
               return;

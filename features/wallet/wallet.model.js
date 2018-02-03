@@ -4,8 +4,8 @@ module.exports = mongoose => {
     {
       userId: mongoose.Schema.ObjectId,
       address: String,
-      privateKey: Buffer,
-      btcAddress: String
+      privateKey: Buffer
+      // btcAddress: String
     },
     'wallet'
   );
