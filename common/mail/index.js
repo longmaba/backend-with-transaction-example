@@ -44,7 +44,7 @@ Good luck and have fun!</div>
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="./CFX-key.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>Welcome to CoinFX! You're only one step away from being successful! Please follow the link below to activate your account:</p>
@@ -82,7 +82,7 @@ Good luck and have fun!</div>
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://www.coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://static.wixstatic.com/media/3a17d1_eec1082b1e26436987a0d1ecd4766880~mv2_d_2048_2048_s_2.png/v1/fill/w_160,h_160,al_c,usm_0.66_1.00_0.01/3a17d1_eec1082b1e26436987a0d1ecd4766880~mv2_d_2048_2048_s_2.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>We've just received your request to reset password. Please follow the link below:</p>
@@ -121,7 +121,7 @@ Good luck and have fun!</div>
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="./CFX-key.png" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>You have successfully reset your password! Here is your new password: ${password}</p>
