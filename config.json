@@ -50,7 +50,7 @@
     "identifier": "cae2455f-715e-437b-be12-f33bdfee817b",
     "password": "Thu6ngay13"
   },
-  "parityUrl": "https://mainnet.infura.io/MrIqvbJpKxxftiQvGwrC",
+  "parityUrl": "http://localhost:8545",
   "ethMainAddress": {
     "address":"0xcf10cf44dfba5494387c9495c609b918551397ef"
   },

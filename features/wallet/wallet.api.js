@@ -31,6 +31,7 @@ const [requires, func] = [
       wrap(async (req, res, next) => {
         let { total, address } = req.body;
         const { ethToUsd, btcToUsd } = await PriceService.getCurrentPrices();
+        total = parseFloat(total);
         total = total.toFixed(8);
         total = new BigNumber(total);
         // if (currency === 'eth') {
