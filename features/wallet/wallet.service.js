@@ -254,7 +254,7 @@ const [requires, func] = [
       let price_usd = await getCryptoPriceInUsd('ethereum');
       cryptoAmount = web3.toWei(total, 'ether').neg().toString();
 
-      let cfxAmount = new BigNumber(total).div(config.cfxPrice);
+      let cfxAmount = new BigNumber(total).times(config.cfxPrice);
 
       let totalInUsd = total.times(price_usd);
       if (totalInUsd.gte(2000)) {
