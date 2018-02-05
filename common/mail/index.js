@@ -14,7 +14,7 @@ module.exports = {
       func: email => (to, otp) => {
         return email.sendMail({
           text: `Use this code to login: ${otp}`,
-          from: 'CoinForex Authentication <login@coinforex.io>',
+          from: 'Forex Coin Authentication <login@coinforex.io>',
           to,
           subject: '[Dike] One-time Passcode to Login',
           html: `<div style="background-color:#F3F3F3"><div style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 580px; padding: 10px; background-color: #032F5B; border-radius: 4px; font-family:Verdana, sans-serif">
@@ -38,13 +38,13 @@ Good luck and have fun!</div>
       func: (email, config) => (to, activationCode) => {
         return email.sendMail({
           text: `Activate your email`,
-          from: 'CoinForex Authentication <login@coinforex.io>',
+          from: 'Forex Coin Authentication <login@coinforex.io>',
           to,
           subject: 'CFX - Account activation',
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>Welcome to CoinFX! You're only one step away from being successful! Please follow the link below to activate your account:</p>
@@ -76,13 +76,13 @@ Good luck and have fun!</div>
       func: (email, config) => (to, activationCode) => {
         return email.sendMail({
           text: `Reset your password`,
-          from: 'CoinForex <login@coinforex.io>',
+          from: 'Forex Coin <login@coinforex.io>',
           to,
           subject: 'CFX - Reset Password',
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>We've just received your request to reset password. Please follow the link below:</p>
@@ -115,13 +115,13 @@ Good luck and have fun!</div>
       func: (email, config) => (to, password) => {
         return email.sendMail({
           text: `Your new password`,
-          from: 'CoinForex <login@coinforex.io>',
+          from: 'Forex Coin <login@coinforex.io>',
           to,
           subject: 'CFX - New Password',
           html: `<div style="background-color: #eee;">
 <div style="background-color: #eee; padding: 50px 0;">
 <div style="width: 600px; margin: 0 auto;">
-<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>CoinForex</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
+<div style="height: 64px; background-color: #323438; padding-top: 10px; padding-bottom: 10px; padding-left: 30px"><a href="https://coinforex.io" target="_blank" rel="noopener" ><img style="height: 70px; display: inline-block; vertical-align: middle;" src="https://coinforex.io/wp-content/uploads/2018/01/ezgif.com-webp-to-jpg-4.jpg" alt="" /></a> <span style="margin: 0; color: #666; font-size: 18px; font-family: PingFangSC,arial; vertical-align: middle; display: inline-block; padding: 4px 0 0 5px;"><span style="font-size: 22px; color: #fff"><b>Forex Coin</b></span><br /><span style="font-size: 16px">FX Blockchain Platform</span></span></div>
 <div style="padding: 35px 40px; background-color: #fff; color: #535353; line-height: 26px; margin: 10px auto; font-family: PingFangSC,arial;">
 <p>Hello,</p>
 <p>You have successfully reset your password! Here is your new password: ${password}</p>
