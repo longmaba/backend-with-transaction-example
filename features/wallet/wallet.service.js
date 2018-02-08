@@ -128,7 +128,11 @@ const [requires, func] = [
     };
 
     WalletService.transferToMain = async (fromAddress, amount) => {
-      const gas = 21000;
+      const gas = await estimateGas(
+        fromAddress,
+        config.ethMainAddress.address,
+        amount
+      );
       const gasPrice = await getGasPrice();
       const totalGas = new BigNumber(gas).mul(gasPrice);
       const wallet = await Wallet.findOne({ address: fromAddress });
@@ -147,10 +151,11 @@ const [requires, func] = [
       const count = await web3.eth.getTransactionCount(fromAddress);
       amount = new BigNumber(amount);
       const gasPrice = await getGasPrice();
+      const gasLimit = await estimateGas(fromAddress, toAddress, amount);
       const txParams = {
         nonce: `0x${count.toString(16)}`,
         gasPrice: `0x${new BigNumber(gasPrice).toString(16)}`,
-        gasLimit: `0x${new BigNumber(21000).toString(16)}`,
+        gasLimit: `0x${new BigNumber(gasLimit).toString(16)}`,
         to: toAddress,
         value: `0x${amount.toString(16)}`
       };
@@ -227,6 +232,17 @@ const [requires, func] = [
         });
       } catch (e) {}
     };
+
+    const estimateGas = (from, to, amount) =>
+      new Promise((resolve, reject) => {
+        web3.eth.estimateGas({ from, to, amount }, (err, gas) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(gas);
+          }
+        });
+      });
 
     WalletService.getUserByAddress = async address => {
       const id = await WalletService.getUserIdByAddress(address);
