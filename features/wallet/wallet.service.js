@@ -235,13 +235,16 @@ const [requires, func] = [
 
     const estimateGas = (from, to, amount) =>
       new Promise((resolve, reject) => {
-        web3.eth.estimateGas({ from, to, amount }, (err, gas) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(gas);
+        web3.eth.estimateGas(
+          { from, to, value: `0x${new BigNumber(amount).toString(16)}` },
+          (err, gas) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(gas);
+            }
           }
-        });
+        );
       });
 
     WalletService.getUserByAddress = async address => {

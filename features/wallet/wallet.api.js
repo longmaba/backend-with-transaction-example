@@ -1,5 +1,5 @@
 const [requires, func] = [
-  '::express, checkLoggedIn,checkTfa, api, async-wrapper, error, services.Wallet, services.Price, queue, web3, ::bignumber.js',
+  '::express, checkLoggedIn,checkTfa, api, async-wrapper, error, services.Wallet, services.Price, queue, web3, ::bignumber.js, config',
   (
     express,
     checkLoggedIn,
@@ -11,9 +11,12 @@ const [requires, func] = [
     PriceService,
     queue,
     web3,
-    BigNumber
+    BigNumber,
+    config
   ) => {
     let router = express.Router();
+
+    const appName = process.env.appName || config.appName;
 
     router.get(
       '/info',
@@ -64,7 +67,7 @@ const [requires, func] = [
       '/check/eth/:tx',
       wrap(async (req, res, next) => {
         await queue
-          .create('cfx:ethRetry', {
+          .create(`${appName}:ethRetry`, {
             tx: req.params.tx
           })
           .save();
