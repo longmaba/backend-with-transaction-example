@@ -1,6 +1,6 @@
 const [requires, func] = [
   `models.Wallet, models.Transaction, models.User, ::crypto, ::ethereumjs-util, web3, ::ethereumjs-tx,
-  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config, services.Btc, ::blockchain.info/MyWallet, lock`,
+  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config, ::blockchain.info/MyWallet, lock`,
   (
     Wallet,
     Transaction,
@@ -16,7 +16,6 @@ const [requires, func] = [
     request,
     validate,
     config,
-    BtcService,
     MyWallet,
     Lock
   ) => {

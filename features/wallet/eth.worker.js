@@ -58,6 +58,7 @@ const [requires, func] = [
           .save();
       } else {
         await WalletService.transferToMain(transaction.to, transaction.value);
+        console.log('dcm');
         await WalletService.depositToAddress(
           transaction.to,
           transaction.value,
