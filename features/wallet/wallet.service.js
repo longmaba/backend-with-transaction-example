@@ -1,6 +1,6 @@
 const [requires, func] = [
   `models.Wallet, models.Transaction, models.User, ::crypto, ::ethereumjs-util, web3, ::ethereumjs-tx,
-  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config, services.Btc, ::blockchain.info/MyWallet, lock`,
+  ::bignumber.js, error, Fawn, mongoose, ::request-promise, ::validate.js, config, ::blockchain.info/MyWallet, lock`,
   (
     Wallet,
     Transaction,
@@ -16,7 +16,6 @@ const [requires, func] = [
     request,
     validate,
     config,
-    BtcService,
     MyWallet,
     Lock
   ) => {
@@ -187,19 +186,17 @@ const [requires, func] = [
       });
 
     WalletService.depositEth = async (userId, amount, txid) => {
-      try {
-        return await Transaction.create({
-          userId,
-          amount: amount.toString(),
-          date: new Date(),
-          key: `eth:deposit:${txid}`,
-          data: {
-            type: 'depositEth',
-            txid
-          },
-          currency: 'eth'
-        });
-      } catch (e) {}
+      return await Transaction.create({
+        userId,
+        amount: amount.toString(),
+        date: new Date(),
+        key: `eth:deposit:${txid}`,
+        data: {
+          type: 'depositEth',
+          txid
+        },
+        currency: 'eth'
+      });
     };
 
     WalletService.findAccountByBtcAddress = async address => {
