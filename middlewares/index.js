@@ -6,7 +6,14 @@ module.exports = {
     checkLoggedIn: 'check-logged-in',
     checkBasic: 'check-basic << ::basic-auth',
     checkAdmin: 'check-admin',
-    checkTfa: 'checkTfa << ::speakeasy'
+    checkTfa: 'checkTfa << ::speakeasy',
+    throwError: 'throw-error'
   },
-  exports: ['checkLoggedIn', 'checkBasic', 'checkAdmin', 'checkTfa']
+  exports: [
+    'checkLoggedIn',
+    'checkBasic',
+    'checkAdmin',
+    'checkTfa',
+    'throwError'
+  ]
 };

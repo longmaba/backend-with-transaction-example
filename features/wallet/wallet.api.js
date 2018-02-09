@@ -1,5 +1,7 @@
 const [requires, func] = [
-  '::express, checkLoggedIn,checkTfa, api, async-wrapper, error, services.Wallet, services.Price, queue, web3, ::bignumber.js, config',
+  `::express, checkLoggedIn,checkTfa, api, 
+  async-wrapper, error, throwError,
+  services.Wallet, services.Price, queue, web3, ::bignumber.js, config`,
   (
     express,
     checkLoggedIn,
@@ -7,6 +9,7 @@ const [requires, func] = [
     api,
     wrap,
     error,
+    throwError,
     WalletService,
     PriceService,
     queue,
@@ -29,6 +32,7 @@ const [requires, func] = [
 
     router.post(
       '/buyCFX',
+      throwError('You cannot purchase CFX at this moment.', 501),
       checkLoggedIn(),
       checkTfa(),
       wrap(async (req, res, next) => {
