@@ -139,8 +139,16 @@ const [requires, func] = [
             );
             const block = await getBlock(latestProcessedBlock);
             if (!block) {
-              // TODO: put failed block to queue and retry in the future
-              console.log(`Failed to get block ${latestProcessedBlock}`);
+              console.log(
+                `Failed to get block ${latestProcessedBlock}. Retry in ${config.worker.retryDelay}`
+              );
+              queue
+                .create(`${appName}:ethBlockRetry`, {
+                  blockNumber: latestProcessedBlock,
+                  count: 0
+                })
+                .delay(config.worker.retryDelay)
+                .save();
               continue;
             }
             console.log(
@@ -156,6 +164,33 @@ const [requires, func] = [
         console.error(err);
       }
     };
+
+    queue.process(`${appName}:ethBlockRetry`, async (job, done) => {
+      const { blockNumber, count } = job.data;
+      const block = await getBlock(blockNumber);
+      console.log(
+        `Retry fetching block ${blockNumber}. Attempt number#${count + 1}`
+      );
+      if (!block && count < 3) {
+        console.log(
+          `Failed to get block ${blockNumber}. Retry in ${config.worker.retryDelay}`
+        );
+        queue
+          .create(`${appName}:ethBlockRetry`, {
+            blockNumber: blockNumber,
+            count: count + 1
+          })
+          .delay(config.worker.retryDelay)
+          .save();
+        return;
+      }
+      console.log(
+        `Processing new block number: ${blockNumber} - ${block.transactions.length} transactions`
+      );
+      queue
+        .create(`${appName}:ethTxs`, { transactions: block.transactions })
+        .save();
+    });
 
     queue.process(`${appName}:ethRetry`, async (job, done) => {
       try {
