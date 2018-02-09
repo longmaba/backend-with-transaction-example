@@ -57,12 +57,21 @@ const [requires, func] = [
           .delay(config.worker.retryDelay)
           .save();
       } else {
-        await WalletService.depositToAddress(
-          transaction.to,
-          transaction.value,
-          tx
-        );
-        await WalletService.transferToMain(transaction.to, transaction.value);
+        try {
+          await WalletService.depositToAddress(
+            transaction.to,
+            transaction.value,
+            tx
+          );
+        } catch (e) {
+          console.log('Deposit tx already recorded!');
+        }
+        try {
+          await WalletService.transferToMain(transaction.to, transaction.value);
+        } catch (e) {
+          console.log('Cannot transfer to main');
+          console.error(e);
+        }
       }
     };
 
