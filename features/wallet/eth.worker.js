@@ -185,7 +185,7 @@ const [requires, func] = [
         return;
       }
       console.log(
-        `Processing new block number: ${blockNumber} - ${block.transactions.length} transactions`
+        `Retry block: ${blockNumber} succeeded - ${block.transactions.length} transactions`
       );
       queue
         .create(`${appName}:ethTxs`, { transactions: block.transactions })
