@@ -130,7 +130,7 @@ const [requires, func] = [
             .create(`${appName}:ethTxs`, { transactions: block.transactions })
             .save();
         } else {
-          while (latestProcessedBlock < blockNumber - 3) {
+          while (latestProcessedBlock < blockNumber) {
             lock.extend(ttl);
             latestProcessedBlock++;
             await ValueService.set(
