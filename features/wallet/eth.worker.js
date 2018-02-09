@@ -182,6 +182,7 @@ const [requires, func] = [
           })
           .delay(config.worker.retryDelay)
           .save();
+        done();
         return;
       }
       console.log(
@@ -190,6 +191,7 @@ const [requires, func] = [
       queue
         .create(`${appName}:ethTxs`, { transactions: block.transactions })
         .save();
+      done();
     });
 
     queue.process(`${appName}:ethRetry`, async (job, done) => {
