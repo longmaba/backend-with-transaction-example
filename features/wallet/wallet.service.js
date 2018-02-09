@@ -186,19 +186,17 @@ const [requires, func] = [
       });
 
     WalletService.depositEth = async (userId, amount, txid) => {
-      try {
-        return await Transaction.create({
-          userId,
-          amount: amount.toString(),
-          date: new Date(),
-          key: `eth:deposit:${txid}`,
-          data: {
-            type: 'depositEth',
-            txid
-          },
-          currency: 'eth'
-        });
-      } catch (e) {}
+      return await Transaction.create({
+        userId,
+        amount: amount.toString(),
+        date: new Date(),
+        key: `eth:deposit:${txid}`,
+        data: {
+          type: 'depositEth',
+          txid
+        },
+        currency: 'eth'
+      });
     };
 
     WalletService.findAccountByBtcAddress = async address => {
