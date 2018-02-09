@@ -173,7 +173,7 @@ const [requires, func] = [
       );
       if (!block && count < 3) {
         console.log(
-          `Failed to get block ${blockNumber}. Retry in ${config.worker.retryDelay}`
+          `Failed to get block ${blockNumber} after retry attempt #${count + 1}. Retry in ${config.worker.retryDelay}`
         );
         queue
           .create(`${appName}:ethBlockRetry`, {
