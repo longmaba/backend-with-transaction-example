@@ -219,7 +219,7 @@ const [requires, func] = [
       '/getKYCPendingUsers',
       wrap(async (req, res, next) => {
         const users = await UserService.getKYCPendingUsers();
-        res.send(users.kycData);
+        res.send(users[0].kycData);
       })
     );
 
