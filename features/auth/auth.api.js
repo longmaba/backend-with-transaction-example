@@ -180,8 +180,8 @@ const [requires, func] = [
       '/setKYCStatus',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        const { userId, kycStatus } = req.body;
-        await UserService.setKYCStatus(userId, kycStatus);
+        const { email, kycStatus } = req.body;
+        await UserService.setKYCStatus(email, kycStatus);
         res.sendStatus(200);
       })
     );
@@ -217,9 +217,11 @@ const [requires, func] = [
 
     router.get(
       '/getKYCPendingUsers',
+      checkLoggedIn(),
       wrap(async (req, res, next) => {
         const users = await UserService.getKYCPendingUsers();
-        res.send(users[0].kycData);
+        const kycDatas = users.map(u => u.kycData);
+        res.send(kycDatas);
       })
     );
 

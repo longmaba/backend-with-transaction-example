@@ -99,8 +99,8 @@ const [requires, func] = [
       return user;
     };
 
-    UserService.setKYCStatus = async (id, kycStatus) => {
-      const user = await User.findById(id);
+    UserService.setKYCStatus = async (email, kycStatus) => {
+      const user = await User.findOne({ email });
       if (!user) {
         throw error(404, 'User not found!');
       }
@@ -116,7 +116,7 @@ const [requires, func] = [
       }
       user.kycData = kycData;
       await user.save();
-      await UserService.setKYCStatus(user._id, 'Pending');
+      await UserService.setKYCStatus(email, 'Pending');
       return user;
     };
 
