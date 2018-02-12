@@ -106,13 +106,14 @@ const [requires, func] = [
       '/userInfo',
       checkLoggedIn(),
       wrap(async (req, res, next) => {
-        const { _id, email, referralCode, username } = req.user;
+        const { _id, email, referralCode, username, kycStatus } = req.user;
         res.send({
           id: _id,
           email,
           referralCode,
           username,
-          tfaEnabled: !!req.user.tfaSecret
+          tfaEnabled: !!req.user.tfaSecret,
+          kycStatus
         });
       })
     );
@@ -172,6 +173,53 @@ const [requires, func] = [
         req.user.tfaSecret = null;
         await req.user.save();
         res.sendStatus(200);
+      })
+    );
+
+    router.post(
+      '/setKYCStatus',
+      checkLoggedIn(),
+      wrap(async (req, res, next) => {
+        const { userId, kycStatus } = req.body;
+        await UserService.setKYCStatus(userId, kycStatus);
+        res.sendStatus(200);
+      })
+    );
+
+    router.post(
+      '/receiveKYCDataFromGoogle',
+      wrap(async (req, res, next) => {
+        const {
+          time,
+          email,
+          fullName,
+          address,
+          nationality,
+          dob,
+          documentType,
+          front,
+          back
+        } = req.body;
+        await UserService.setKYCData(email, {
+          time,
+          email,
+          fullName,
+          address,
+          nationality,
+          dob,
+          documentType,
+          front,
+          back
+        });
+        res.sendStatus(200);
+      })
+    );
+
+    router.get(
+      '/getKYCPendingUsers',
+      wrap(async (req, res, next) => {
+        const users = await UserService.getKYCPendingUsers();
+        res.send(users.kycData);
       })
     );
 

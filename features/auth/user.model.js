@@ -6,7 +6,13 @@ module.exports = (mongoose, NestedSetPlugin) => {
     referralCode: String,
     parentId: mongoose.Schema.ObjectId,
     isActivated: Boolean,
-    tfaSecret: String
+    tfaSecret: String,
+    kycStatus: {
+      type: String,
+      enum: ['Unverified', 'Pending', 'Verified'],
+      default: 'Unverified'
+    },
+    kycData: mongoose.Schema.Types.Mixed
   });
   schema.plugin(NestedSetPlugin);
   return mongoose.model('User', schema, 'user');

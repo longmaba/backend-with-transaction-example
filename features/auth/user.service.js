@@ -99,6 +99,35 @@ const [requires, func] = [
       return user;
     };
 
+    UserService.setKYCStatus = async (id, kycStatus) => {
+      const user = await User.findById(id);
+      if (!user) {
+        throw error(404, 'User not found!');
+      }
+      user.kycStatus = kycStatus;
+      await user.save();
+      return user;
+    };
+
+    UserService.setKYCData = async (email, kycData) => {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw error(404, 'User not found!');
+      }
+      user.kycData = kycData;
+      await user.save();
+      await UserService.setKYCStatus(user._id, 'Pending');
+      return user;
+    };
+
+    UserService.getKYCPendingUsers = async () => {
+      const users = await User.find({ kycStatus: 'Pending' });
+      if (users.length == 0) {
+        throw error(404, 'No users found!');
+      }
+      return users;
+    };
+
     UserService.resendActivationEmail = async email => {
       const user = await User.findOne({ email });
       if (!user) {
