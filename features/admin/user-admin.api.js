@@ -1,6 +1,6 @@
 const [requires, func] = [
-  `::express, api, async-wrapper, models.User, config`,
-  (express, api, wrap, User, config) => {
+  `::express, api, async-wrapper, models.User, checkBasic, config`,
+  (express, api, wrap, User, checkBasic, config) => {
     let router = express.Router();
 
     api.get(
