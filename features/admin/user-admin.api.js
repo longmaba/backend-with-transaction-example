@@ -20,7 +20,7 @@ const [requires, func] = [
     );
 
     api.use(
-      '/admin/user',
+      '/admin',
       checkBasic(config.admin.name, config.admin.pass),
       router
     );
