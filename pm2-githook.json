@@ -1,6 +1,7 @@
 {
   "api": {
     "service": "bitbucket",
+    "secret": "104.192.136.0/21",
     "prehook": "npm install"
   }
 }
