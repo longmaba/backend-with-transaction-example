@@ -109,66 +109,62 @@ const [requires, func] = [
       });
 
     const processBlock = async () => {
-      try {
-        const ttl = 10000;
-        const lock = await Lock.lock(`${appName}/eth/CHECK_BLOCK`, ttl);
+      const ttl = 10000;
+      const lock = await Lock.lock(`${appName}/eth/CHECK_BLOCK`, ttl);
 
-        try {
-          const blockNumber = web3.eth.blockNumber;
-          let latestProcessedBlock = await ValueService.get(
-            LATEST_PROCESSED_BLOCK
+      try {
+        const blockNumber = web3.eth.blockNumber;
+        let latestProcessedBlock = await ValueService.get(
+          LATEST_PROCESSED_BLOCK
+        );
+        console.log('Current Block Number:', blockNumber);
+        if (!latestProcessedBlock) {
+          await ValueService.set(LATEST_PROCESSED_BLOCK, blockNumber);
+          const block = await getBlock(blockNumber);
+          if (!block) {
+            return;
+          }
+          console.log(
+            `Processing new block number: ${blockNumber} - ${block.transactions.length} transactions`
           );
-          console.log('Current Block Number:', blockNumber);
-          if (!latestProcessedBlock) {
-            await ValueService.set(LATEST_PROCESSED_BLOCK, blockNumber);
-            const block = await getBlock(blockNumber);
-            if (!block) {
-              return;
-            }
-            console.log(
-              `Processing new block number: ${blockNumber} - ${block.transactions.length} transactions`
+          queue
+            .create(`${appName}:ethTxs`, { transactions: block.transactions })
+            .save();
+        } else {
+          while (latestProcessedBlock < blockNumber - 3) {
+            lock.extend(ttl);
+            latestProcessedBlock++;
+            await ValueService.set(
+              LATEST_PROCESSED_BLOCK,
+              latestProcessedBlock
             );
-            queue
-              .create(`${appName}:ethTxs`, { transactions: block.transactions })
-              .save();
-          } else {
-            while (latestProcessedBlock < blockNumber - 3) {
-              lock.extend(ttl);
-              latestProcessedBlock++;
-              await ValueService.set(
-                LATEST_PROCESSED_BLOCK,
-                latestProcessedBlock
-              );
-              const block = await getBlock(latestProcessedBlock);
-              if (!block) {
-                console.log(
-                  `Failed to get block ${latestProcessedBlock}. Retry in ${config.worker.retryDelay}`
-                );
-                queue
-                  .create(`${appName}:ethBlockRetry`, {
-                    blockNumber: latestProcessedBlock,
-                    count: 0
-                  })
-                  .delay(config.worker.retryDelay)
-                  .save();
-                continue;
-              }
+            const block = await getBlock(latestProcessedBlock);
+            if (!block) {
               console.log(
-                `Processing new block number: ${latestProcessedBlock} - ${block.transactions.length} transactions`
+                `Failed to get block ${latestProcessedBlock}. Retry in ${config.worker.retryDelay}`
               );
               queue
-                .create(`${appName}:ethTxs`, {
-                  transactions: block.transactions
+                .create(`${appName}:ethBlockRetry`, {
+                  blockNumber: latestProcessedBlock,
+                  count: 0
                 })
+                .delay(config.worker.retryDelay)
                 .save();
+              continue;
             }
+            console.log(
+              `Processing new block number: ${latestProcessedBlock} - ${block.transactions.length} transactions`
+            );
+            queue
+              .create(`${appName}:ethTxs`, {
+                transactions: block.transactions
+              })
+              .save();
           }
-        } catch (err) {
-          console.error(err);
         }
         await lock.unlock();
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
       }
     };
 
