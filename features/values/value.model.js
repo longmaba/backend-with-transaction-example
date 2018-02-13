@@ -6,8 +6,7 @@ module.exports = mongoose => {
         type: String,
         index: true
       },
-      value: mongoose.Schema.Types.Mixed,
-      history: []
+      value: mongoose.Schema.Types.Mixed
     },
     'value'
   );

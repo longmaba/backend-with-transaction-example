@@ -8,11 +8,9 @@ const [requires, func] = [
       if (!pair) {
         pair = new Value({
           key,
-          value,
-          history: []
+          value
         });
       } else {
-        pair.history = [...pair.history, pair.value];
         pair.value = value;
       }
       await pair.save();
@@ -32,7 +30,7 @@ const [requires, func] = [
     };
 
     return ValueService;
-  }  
+  }
 ];
 
 module.exports = {
