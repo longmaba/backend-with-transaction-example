@@ -12,7 +12,8 @@ module.exports = (mongoose, NestedSetPlugin) => {
       enum: ['Unverified', 'Pending', 'Verified'],
       default: 'Unverified'
     },
-    kycData: mongoose.Schema.Types.Mixed
+    kycData: mongoose.Schema.Types.Mixed,
+    isAdmin: Boolean
   });
   schema.plugin(NestedSetPlugin);
   return mongoose.model('User', schema, 'user');

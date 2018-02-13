@@ -1,11 +1,12 @@
 const [requires, func] = [
-  ' ::express, services.User, checkLoggedIn, ::speakeasy, checkTfa, api, async-wrapper, error, jwt, md5, config',
+  ' ::express, services.User, checkLoggedIn, ::speakeasy, checkTfa, checkAdmin, api, async-wrapper, error, jwt, md5, config',
   (
     express,
     UserService,
     checkLoggedIn,
     speakeasy,
     checkTfa,
+    checkAdmin,
     api,
     wrap,
     error,
@@ -179,6 +180,7 @@ const [requires, func] = [
     router.post(
       '/setKYCStatus',
       checkLoggedIn(),
+      checkAdmin(),
       wrap(async (req, res, next) => {
         const { email, kycStatus } = req.body;
         await UserService.setKYCStatus(email, kycStatus);
@@ -218,6 +220,7 @@ const [requires, func] = [
     router.get(
       '/getKYCPendingUsers',
       checkLoggedIn(),
+      checkAdmin(),
       wrap(async (req, res, next) => {
         const users = await UserService.getKYCPendingUsers();
         const kycDatas = users.map(u => u.kycData);
