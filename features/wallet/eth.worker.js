@@ -109,9 +109,10 @@ const [requires, func] = [
       });
 
     const processBlock = async () => {
+      const ttl = 10000;
+      const lock = await Lock.lock(`${appName}/eth/CHECK_BLOCK`, ttl);
+
       try {
-        const ttl = 10000;
-        const lock = await Lock.lock(`${appName}/eth/CHECK_BLOCK`, ttl);
         const blockNumber = web3.eth.blockNumber;
         let latestProcessedBlock = await ValueService.get(
           LATEST_PROCESSED_BLOCK
