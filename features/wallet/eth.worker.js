@@ -159,10 +159,10 @@ const [requires, func] = [
               .save();
           }
         }
-        await lock.unlock();
       } catch (err) {
         console.error(err);
       }
+      await lock.unlock();
     };
 
     queue.process(`${appName}:ethBlockRetry`, async (job, done) => {
