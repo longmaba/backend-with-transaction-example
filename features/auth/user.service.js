@@ -122,9 +122,6 @@ const [requires, func] = [
 
     UserService.getKYCPendingUsers = async () => {
       const users = await User.find({ kycStatus: 'Pending' });
-      if (users.length == 0) {
-        throw error(404, 'No users found!');
-      }
       return users;
     };
 
