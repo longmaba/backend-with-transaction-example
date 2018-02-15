@@ -32,7 +32,7 @@ const [requires, func] = [
 
     router.post(
       '/buyCFX',
-      throwError('Pre ICO is coming soon.', 501),
+      // throwError('Pre ICO is coming soon.', 501),
       checkLoggedIn(),
       checkTfa(),
       wrap(async (req, res, next) => {
