@@ -10,7 +10,7 @@ module.exports = {
           [client],
           {
             driftFactor: 0.01,
-            retryCount: 10,
+            retryCount: 0,
             retryDelay: 100,
           },
         );

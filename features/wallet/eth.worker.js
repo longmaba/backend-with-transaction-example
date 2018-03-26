@@ -132,7 +132,6 @@ const [requires, func] = [
             .save();
         } else {
           if (latestProcessedBlock < blockNumber - 3) {
-            await lock.extend(ttl);
             latestProcessedBlock++;
             await ValueService.set(
               LATEST_PROCESSED_BLOCK,
