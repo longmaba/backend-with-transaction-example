@@ -131,7 +131,7 @@ const [requires, func] = [
             .create(`${appName}:ethTxs`, { transactions: block.transactions })
             .save();
         } else {
-          while (latestProcessedBlock < blockNumber - 3) {
+          if (latestProcessedBlock < blockNumber - 3) {
             await lock.extend(ttl);
             latestProcessedBlock++;
             await ValueService.set(
@@ -233,7 +233,7 @@ const [requires, func] = [
     const initCron = () => {
       console.log('Cron Started');
       new CronJob(
-        '*/10 * * * * *',
+        '*/5 * * * * *',
         async () => {
           console.log('Checking for new block!');
           await processBlock();
