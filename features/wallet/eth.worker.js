@@ -229,6 +229,8 @@ const [requires, func] = [
       }
     });
 
+    queue.on('error', err => console.log);
+
     const initCron = () => {
       console.log('Cron Started');
       new CronJob(
