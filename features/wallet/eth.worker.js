@@ -132,7 +132,7 @@ const [requires, func] = [
             .save();
         } else {
           while (latestProcessedBlock < blockNumber - 3) {
-            lock.extend(ttl);
+            await lock.extend(ttl);
             latestProcessedBlock++;
             await ValueService.set(
               LATEST_PROCESSED_BLOCK,
@@ -231,9 +231,11 @@ const [requires, func] = [
     });
 
     const initCron = () => {
+      console.log('Cron Started');
       new CronJob(
         '*/10 * * * * *',
         async () => {
+          console.log('Checking for new block!');
           await processBlock();
         },
         null,
