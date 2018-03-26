@@ -150,16 +150,16 @@ const [requires, func] = [
                 })
                 .delay(config.worker.retryDelay)
                 .save();
-              continue;
+            } else {
+              console.log(
+                `Processing new block number: ${latestProcessedBlock} - ${block.transactions.length} transactions`
+              );
+              queue
+                .create(`${appName}:ethTxs`, {
+                  transactions: block.transactions
+                })
+                .save();
             }
-            console.log(
-              `Processing new block number: ${latestProcessedBlock} - ${block.transactions.length} transactions`
-            );
-            queue
-              .create(`${appName}:ethTxs`, {
-                transactions: block.transactions
-              })
-              .save();
           }
         }
         await lock.unlock();
