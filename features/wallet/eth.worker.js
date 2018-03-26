@@ -110,7 +110,7 @@ const [requires, func] = [
 
     const processBlock = async () => {
       const ttl = 10000;
-      const lock = await Lock.lock(`${appName}/eth/CHECK_BLOCK`, ttl);
+      const lock = await Lock.lock(`${appName}/eth/CHECK_BLOCK`, ttl).catch(() => console.log('Failed to get lock!'));
 
       try {
         const blockNumber = web3.eth.blockNumber;
