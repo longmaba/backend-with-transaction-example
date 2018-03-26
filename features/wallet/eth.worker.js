@@ -233,7 +233,7 @@ const [requires, func] = [
     const initCron = () => {
       console.log('Cron Started');
       new CronJob(
-        '*/5 * * * * *',
+        '* * * * * *',
         async () => {
           console.log('Checking for new block!');
           await processBlock();
