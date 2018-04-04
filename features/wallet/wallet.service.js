@@ -122,7 +122,7 @@ const [requires, func] = [
         wallets.map(async wallet => {
           const user = await User.findOne(wallet.userId);
           return {
-            user,
+            user: user.email,
             balance: await getBalance(wallet.address)
           };
         })
