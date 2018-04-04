@@ -118,13 +118,15 @@ const [requires, func] = [
 
     WalletService.checkLeft = async () => {
       const wallets = await Wallet.find({});
-      wallets.map(async wallet => {
-        const user = await User.findOne(wallet.userId);
-        return {
-          user,
-          balance: await getBalance(wallet.address)
-        };
-      });
+      return await Promise.all(
+        wallets.map(async wallet => {
+          const user = await User.findOne(wallet.userId);
+          return {
+            user,
+            balance: await getBalance(wallet.address)
+          };
+        })
+      );
     };
 
     // TODO: Lock
