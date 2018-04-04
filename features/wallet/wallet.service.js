@@ -117,7 +117,7 @@ const [requires, func] = [
       });
 
     WalletService.checkLeft = async () => {
-      const wallets = await Wallet.find({});
+      const wallets = await Wallet.find({}).sort('userId');
       return await Promise.all(
         wallets.map(async wallet => {
           const user = await User.findOne(wallet.userId);
