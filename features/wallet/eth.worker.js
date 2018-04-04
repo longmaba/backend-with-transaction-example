@@ -110,6 +110,7 @@ const [requires, func] = [
 
     const processBlock = async () => {
       const ttl = 10000;
+      const start = Date.now();
       const lock = await Lock.lock(
         `${appName}/eth/CHECK_BLOCK`,
         ttl
@@ -138,7 +139,7 @@ const [requires, func] = [
             .create(`${appName}:ethTxs`, { transactions: block.transactions })
             .save();
         } else {
-          if (latestProcessedBlock < blockNumber - 3) {
+          while (latestProcessedBlock < blockNumber - 3 && Date.now() - start <= 8000) {
             latestProcessedBlock++;
             await ValueService.set(
               LATEST_PROCESSED_BLOCK,
@@ -241,7 +242,7 @@ const [requires, func] = [
     const initCron = () => {
       console.log('Cron Started');
       new CronJob(
-        '* * * * * *',
+        '*/10 * * * * *',
         async () => {
           console.log('Checking for new block!');
           await processBlock();
