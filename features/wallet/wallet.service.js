@@ -92,6 +92,17 @@ const [requires, func] = [
       });
     };
 
+    WalletService.checkAll = async () => {
+      const users = await User.find({});
+      return await Promise.all(users.map(async user => {
+        return {
+          user,
+          wallet: await WalletService.touchWallet(user._id),
+          balances: await WalletService.balance(user._id)
+        };
+      }));
+    };
+
     // TODO: Lock
     WalletService.balance = async id => {
       const transactions = await Transaction.find({
