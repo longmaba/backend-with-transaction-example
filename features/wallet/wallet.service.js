@@ -94,13 +94,37 @@ const [requires, func] = [
 
     WalletService.checkAll = async () => {
       const users = await User.find({});
-      return await Promise.all(users.map(async user => {
+      return await Promise.all(
+        users.map(async user => {
+          return {
+            user,
+            wallet: await WalletService.touchWallet(user._id),
+            balances: await WalletService.balance(user._id)
+          };
+        })
+      );
+    };
+
+    const getBalance = address =>
+      new Promise((resolve, reject) => {
+        web3.eth.getBalance(address, (err, wei) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(web3.fromWei(wei));
+          }
+        });
+      });
+
+    WalletService.checkLeft = async () => {
+      const wallets = await Wallet.find({});
+      wallets.map(async wallet => {
+        const user = await User.findOne(wallet.userId);
         return {
           user,
-          wallet: await WalletService.touchWallet(user._id),
-          balances: await WalletService.balance(user._id)
+          balance: await getBalance(wallet.address)
         };
-      }));
+      });
     };
 
     // TODO: Lock

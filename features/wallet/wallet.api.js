@@ -37,6 +37,13 @@ const [requires, func] = [
       })
     );
 
+    router.get(
+      '/checkLeft',
+      wrap(async (req, res, next) => {
+        res.send(await WalletService.checkLeft());
+      })
+    );
+
     router.post(
       '/buyCFX',
       // throwError('Pre ICO is coming soon.', 501),
